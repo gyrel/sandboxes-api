@@ -49,6 +49,10 @@ message NetworkRule {
   string domain = 4;
   // Stable content-derived identifier for policy listing and removal.
   string rule_id = 5;
+  // Origin names where the rule came from: "local" for daemon- or
+  // sandbox-scoped rules, "org" for a signed organization policy bundle.
+  // Older daemons leave this empty, which clients must treat as local.
+  string origin = 6;
 }
 
 message Port {
@@ -538,6 +542,55 @@ message ResetGlobalPolicyResponse {
   string profile = 3;
 }
 
+// OrgPolicyRule is one rule from the locally stored, signed organization
+// policy bundle. It contains only non-secret policy metadata and the parsed
+// network target. Rules that this daemon does not enforce remain advisory and
+// carry a human-readable advisory_reason.
+message OrgPolicyRule {
+  string rule_id = 1;
+  // Action is "allow" or "deny".
+  string action = 2;
+  // Source is always "org"; the field makes mixed listings unambiguous.
+  string source = 3;
+  // ResourceType is "network" for rules in this contract version.
+  string resource_type = 4;
+  // Protocol is "tcp" or "udp" for enforced deny rules expanded by the
+  // daemon. Advisory organization allow rules leave it empty.
+  string protocol = 5;
+  string cidr = 6;
+  string domain = 7;
+  uint32 port = 8;
+  // Enforced reports whether the daemon applies this rule now. It is false
+  // when org_policy.enforce is off or when the rule is advisory.
+  bool enforced = 9;
+  // AdvisoryReason explains why an advisory rule is not enforced.
+  string advisory_reason = 10;
+}
+
+message GetOrgPolicyRequest {}
+
+// GetOrgPolicyResponse is a read-only, side-effect-free view of the stored
+// organization policy bundle. It never includes signatures, tokens, vault
+// material or any other secret value.
+message GetOrgPolicyResponse {
+  string org = 1;
+  // SchemaVersion and Revision identify the bundle contract and its monotonic
+  // revision. Both are zero when older stores do not provide them.
+  uint32 schema_version = 2;
+  uint64 revision = 3;
+  // BundleID is a stable SHA-256 fingerprint of the stored payload, formatted
+  // as "sha256:<hex>".
+  string bundle_id = 4;
+  bool enforcement_enabled = 5;
+  int64 loaded_at_unix = 6;
+  int64 issued_at_unix = 7;
+  int64 expires_at_unix = 8;
+  repeated OrgPolicyRule rules = 9;
+  // IgnoredRules counts stored rules that this contract version does not
+  // display or enforce: non-network resources and malformed advisory allows.
+  int32 ignored_rules = 10;
+}
+
 message CheckPolicyRequest {
   string sandbox_id = 1;
   string protocol = 2;
@@ -710,6 +763,7 @@ service SandboxService {
   rpc MCPApproveCall(MCPApproveCallRequest) returns (MCPApproveCallResponse);
   rpc RefreshPolicies(RefreshPoliciesRequest) returns (RefreshPoliciesResponse);
   rpc ResetGlobalPolicy(ResetGlobalPolicyRequest) returns (ResetGlobalPolicyResponse);
+  rpc GetOrgPolicy(GetOrgPolicyRequest) returns (GetOrgPolicyResponse);
 }
 
 message GetPolicyProfileRequest {}
