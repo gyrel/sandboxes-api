@@ -68,6 +68,21 @@ resolves values from the host vault when sending each request. The legacy
 `headers` field is deprecated and supported daemons reject it because a custom
 header name cannot prove that its value is non-secret.
 
+`SandboxService.GetOrgPolicy` returns the effective view of the locally stored,
+signed organization policy bundle. The response contains the organization,
+bundle schema version and revision, a SHA-256 payload fingerprint, whether
+enforcement is enabled, load and expiry times, and the parsed network rules.
+Each rule reports its action, `source = "org"`, and whether the daemon enforces
+it or treats it as advisory. The read is side-effect free and never returns
+signatures, tokens, vault references, or other secret material. A missing or
+invalid bundle fails closed with a typed gRPC status instead of returning a
+partial view.
+
+The local RPC contract version advances to 0.0.26 with this RPC. Downstream
+modules must bump `github.com/rheic/sandboxes-api` to the release that carries
+contract 0.0.26 before using it. `NetworkRule.origin` is additive: older
+daemons omit it and clients treat an empty origin as `local`.
+
 ## Development
 
 Requires Go 1.27 and `buf` v1.50.0.

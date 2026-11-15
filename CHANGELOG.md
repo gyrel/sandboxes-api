@@ -1,7 +1,20 @@
 # Changelog
 
-## Unreleased
+## Unreleased — local RPC contract 0.0.26
 
+- Add `SandboxService.GetOrgPolicy`, a read-only view of the locally stored,
+  signed organization policy bundle. It reports the organization, bundle
+  schema version and revision, a payload fingerprint, enforcement state, load
+  time, and parsed network rules with an `enforced` flag. It never includes
+  signatures, tokens, or secret material.
+- Add optional `NetworkRule.origin` (`local` or `org`) so policy listings can
+  show provenance. Older daemons leave it empty; clients must treat an empty
+  value as `local`.
+- Advance the local RPC contract version to 0.0.26. Downstream modules must
+  bump `github.com/rheic/sandboxes-api` to the release that carries this
+  contract.
+
+## v0.0.25
 - Add optional `Workspace.guest_path` for mounting a validated host path at an
   explicit guest destination. Empty values retain same-path mount behavior.
 - Advance the local RPC contract version to 0.0.25 so clients can reject older
