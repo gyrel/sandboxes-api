@@ -3,7 +3,7 @@ package version
 
 // Version is the local RPC contract version. It intentionally advances only
 // when that contract changes; Go module tags have an independent release cadence.
-const Version = "0.0.26"
+const Version = "0.0.27"
 
 // SourceSHA256 fingerprints the local sandbox contract used to generate bindings.
-const SourceSHA256 = "1d8135dfc735b81dc6dfb7d792ac3367d05c6c6b3cdb8526e6ab68dc22e791d3"
+const SourceSHA256 = "69180361f1f680a3715e2925394ce8483772e2a8f84715e64507dee7b0c0f1f7"

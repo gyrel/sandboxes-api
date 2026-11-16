@@ -3084,11 +3084,18 @@ func (*RegistryCredentialServiceListRequest) Descriptor() ([]byte, []int) {
 }
 
 type RegistryCredentialSummary struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Registry      string                 `protobuf:"bytes,1,opt,name=registry,proto3" json:"registry,omitempty"`
-	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Scope         string                 `protobuf:"bytes,3,opt,name=scope,proto3" json:"scope,omitempty"`
-	SandboxName   string                 `protobuf:"bytes,4,opt,name=sandbox_name,json=sandboxName,proto3" json:"sandbox_name,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Registry    string                 `protobuf:"bytes,1,opt,name=registry,proto3" json:"registry,omitempty"`
+	Username    string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Scope       string                 `protobuf:"bytes,3,opt,name=scope,proto3" json:"scope,omitempty"`
+	SandboxName string                 `protobuf:"bytes,4,opt,name=sandbox_name,json=sandboxName,proto3" json:"sandbox_name,omitempty"`
+	// Non-secret metadata for machine-readable inventories. Zero timestamps
+	// mean the daemon does not know when an older entry was written.
+	CreatedAtUnix int64 `protobuf:"varint,5,opt,name=created_at_unix,json=createdAtUnix,proto3" json:"created_at_unix,omitempty"`
+	UpdatedAtUnix int64 `protobuf:"varint,6,opt,name=updated_at_unix,json=updatedAtUnix,proto3" json:"updated_at_unix,omitempty"`
+	// Origin names where the entry came from. The local daemon currently writes
+	// "local"; clients must treat an empty value as local.
+	Origin        string `protobuf:"bytes,7,opt,name=origin,proto3" json:"origin,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3147,6 +3154,27 @@ func (x *RegistryCredentialSummary) GetScope() string {
 func (x *RegistryCredentialSummary) GetSandboxName() string {
 	if x != nil {
 		return x.SandboxName
+	}
+	return ""
+}
+
+func (x *RegistryCredentialSummary) GetCreatedAtUnix() int64 {
+	if x != nil {
+		return x.CreatedAtUnix
+	}
+	return 0
+}
+
+func (x *RegistryCredentialSummary) GetUpdatedAtUnix() int64 {
+	if x != nil {
+		return x.UpdatedAtUnix
+	}
+	return 0
+}
+
+func (x *RegistryCredentialSummary) GetOrigin() string {
+	if x != nil {
+		return x.Origin
 	}
 	return ""
 }
@@ -3411,10 +3439,23 @@ func (x *SecretServiceSetRequest) GetSource() *SecretSource {
 }
 
 type SecretSummary struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Service       string                 `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
-	Scope         string                 `protobuf:"bytes,2,opt,name=scope,proto3" json:"scope,omitempty"`
-	SandboxName   string                 `protobuf:"bytes,3,opt,name=sandbox_name,json=sandboxName,proto3" json:"sandbox_name,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Service     string                 `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
+	Scope       string                 `protobuf:"bytes,2,opt,name=scope,proto3" json:"scope,omitempty"`
+	SandboxName string                 `protobuf:"bytes,3,opt,name=sandbox_name,json=sandboxName,proto3" json:"sandbox_name,omitempty"`
+	// Non-secret metadata for machine-readable inventories. Zero timestamps
+	// mean the daemon does not know when an older entry was written.
+	CreatedAtUnix int64 `protobuf:"varint,4,opt,name=created_at_unix,json=createdAtUnix,proto3" json:"created_at_unix,omitempty"`
+	UpdatedAtUnix int64 `protobuf:"varint,5,opt,name=updated_at_unix,json=updatedAtUnix,proto3" json:"updated_at_unix,omitempty"`
+	// SourceKind is "value", "reference" or "command". SecretType is a coarse
+	// value type such as "api_key". Neither field contains secret material.
+	SourceKind  string `protobuf:"bytes,6,opt,name=source_kind,json=sourceKind,proto3" json:"source_kind,omitempty"`
+	Refresh     string `protobuf:"bytes,7,opt,name=refresh,proto3" json:"refresh,omitempty"`
+	Refreshable bool   `protobuf:"varint,8,opt,name=refreshable,proto3" json:"refreshable,omitempty"`
+	SecretType  string `protobuf:"bytes,9,opt,name=secret_type,json=secretType,proto3" json:"secret_type,omitempty"`
+	// Origin names where the entry came from. The local daemon currently writes
+	// "local"; clients must treat an empty value as local.
+	Origin        string `protobuf:"bytes,10,opt,name=origin,proto3" json:"origin,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3466,6 +3507,55 @@ func (x *SecretSummary) GetScope() string {
 func (x *SecretSummary) GetSandboxName() string {
 	if x != nil {
 		return x.SandboxName
+	}
+	return ""
+}
+
+func (x *SecretSummary) GetCreatedAtUnix() int64 {
+	if x != nil {
+		return x.CreatedAtUnix
+	}
+	return 0
+}
+
+func (x *SecretSummary) GetUpdatedAtUnix() int64 {
+	if x != nil {
+		return x.UpdatedAtUnix
+	}
+	return 0
+}
+
+func (x *SecretSummary) GetSourceKind() string {
+	if x != nil {
+		return x.SourceKind
+	}
+	return ""
+}
+
+func (x *SecretSummary) GetRefresh() string {
+	if x != nil {
+		return x.Refresh
+	}
+	return ""
+}
+
+func (x *SecretSummary) GetRefreshable() bool {
+	if x != nil {
+		return x.Refreshable
+	}
+	return false
+}
+
+func (x *SecretSummary) GetSecretType() string {
+	if x != nil {
+		return x.SecretType
+	}
+	return ""
+}
+
+func (x *SecretSummary) GetOrigin() string {
+	if x != nil {
+		return x.Origin
 	}
 	return ""
 }
@@ -6723,12 +6813,15 @@ const file_sandboxes_local_v1_sandbox_proto_rawDesc = "" +
 	"\bregistry\x18\x01 \x01(\tR\bregistry\x12A\n" +
 	"\x05scope\x18\x02 \x01(\x0e2+.sandboxes.local.v1.RegistryCredentialScopeR\x05scope\x12!\n" +
 	"\fsandbox_name\x18\x03 \x01(\tR\vsandboxName\"&\n" +
-	"$RegistryCredentialServiceListRequest\"\x8c\x01\n" +
+	"$RegistryCredentialServiceListRequest\"\xf4\x01\n" +
 	"\x19RegistryCredentialSummary\x12\x1a\n" +
 	"\bregistry\x18\x01 \x01(\tR\bregistry\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
 	"\x05scope\x18\x03 \x01(\tR\x05scope\x12!\n" +
-	"\fsandbox_name\x18\x04 \x01(\tR\vsandboxName\"x\n" +
+	"\fsandbox_name\x18\x04 \x01(\tR\vsandboxName\x12&\n" +
+	"\x0fcreated_at_unix\x18\x05 \x01(\x03R\rcreatedAtUnix\x12&\n" +
+	"\x0fupdated_at_unix\x18\x06 \x01(\x03R\rupdatedAtUnix\x12\x16\n" +
+	"\x06origin\x18\a \x01(\tR\x06origin\"x\n" +
 	"%RegistryCredentialServiceListResponse\x12O\n" +
 	"\vcredentials\x18\x01 \x03(\v2-.sandboxes.local.v1.RegistryCredentialSummaryR\vcredentials\"C\n" +
 	"'RegistryCredentialServiceLogoutResponse\x12\x18\n" +
@@ -6749,11 +6842,21 @@ const file_sandboxes_local_v1_sandbox_proto_rawDesc = "" +
 	"\x05scope\x18\x02 \x01(\tR\x05scope\x12!\n" +
 	"\fsandbox_name\x18\x03 \x01(\tR\vsandboxName\x12\x14\n" +
 	"\x05value\x18\x04 \x01(\fR\x05value\x128\n" +
-	"\x06source\x18\x05 \x01(\v2 .sandboxes.local.v1.SecretSourceR\x06source\"b\n" +
+	"\x06source\x18\x05 \x01(\v2 .sandboxes.local.v1.SecretSourceR\x06source\"\xc8\x02\n" +
 	"\rSecretSummary\x12\x18\n" +
 	"\aservice\x18\x01 \x01(\tR\aservice\x12\x14\n" +
 	"\x05scope\x18\x02 \x01(\tR\x05scope\x12!\n" +
-	"\fsandbox_name\x18\x03 \x01(\tR\vsandboxName\"U\n" +
+	"\fsandbox_name\x18\x03 \x01(\tR\vsandboxName\x12&\n" +
+	"\x0fcreated_at_unix\x18\x04 \x01(\x03R\rcreatedAtUnix\x12&\n" +
+	"\x0fupdated_at_unix\x18\x05 \x01(\x03R\rupdatedAtUnix\x12\x1f\n" +
+	"\vsource_kind\x18\x06 \x01(\tR\n" +
+	"sourceKind\x12\x18\n" +
+	"\arefresh\x18\a \x01(\tR\arefresh\x12 \n" +
+	"\vrefreshable\x18\b \x01(\bR\vrefreshable\x12\x1f\n" +
+	"\vsecret_type\x18\t \x01(\tR\n" +
+	"secretType\x12\x16\n" +
+	"\x06origin\x18\n" +
+	" \x01(\tR\x06origin\"U\n" +
 	"\x18SecretServiceSetResponse\x129\n" +
 	"\x06secret\x18\x01 \x01(\v2!.sandboxes.local.v1.SecretSummaryR\x06secret\"\xbf\x01\n" +
 	"\x1aSecretServiceCreateRequest\x12\x18\n" +

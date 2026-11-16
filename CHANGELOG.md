@@ -1,6 +1,17 @@
 # Changelog
 
-## Unreleased — local RPC contract 0.0.26
+## Unreleased — local RPC contract 0.0.27
+
+- Add non-secret metadata to `SecretSummary`: creation and update times,
+  source kind, refresh policy and capability, coarse value type, and origin.
+  The summary never carries a secret value, reference, command or environment
+  variable value.
+- Add creation and update times and origin to `RegistryCredentialSummary`.
+- Advance the local RPC contract version to 0.0.27. Downstream modules must
+  bump `github.com/rheic/sandboxes-api` to the release that carries this
+  contract.
+
+## Local RPC contract 0.0.26
 
 - Add `SandboxService.GetOrgPolicy`, a read-only view of the locally stored,
   signed organization policy bundle. It reports the organization, bundle
