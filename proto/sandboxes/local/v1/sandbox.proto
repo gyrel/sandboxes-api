@@ -355,6 +355,13 @@ message RegistryCredentialSummary {
   string username = 2;
   string scope = 3;
   string sandbox_name = 4;
+  // Non-secret metadata for machine-readable inventories. Zero timestamps
+  // mean the daemon does not know when an older entry was written.
+  int64 created_at_unix = 5;
+  int64 updated_at_unix = 6;
+  // Origin names where the entry came from. The local daemon currently writes
+  // "local"; clients must treat an empty value as local.
+  string origin = 7;
 }
 
 message RegistryCredentialServiceListResponse {
@@ -390,6 +397,19 @@ message SecretSummary {
   string service = 1;
   string scope = 2;
   string sandbox_name = 3;
+  // Non-secret metadata for machine-readable inventories. Zero timestamps
+  // mean the daemon does not know when an older entry was written.
+  int64 created_at_unix = 4;
+  int64 updated_at_unix = 5;
+  // SourceKind is "value", "reference" or "command". SecretType is a coarse
+  // value type such as "api_key". Neither field contains secret material.
+  string source_kind = 6;
+  string refresh = 7;
+  bool refreshable = 8;
+  string secret_type = 9;
+  // Origin names where the entry came from. The local daemon currently writes
+  // "local"; clients must treat an empty value as local.
+  string origin = 10;
 }
 
 message SecretServiceSetResponse {
