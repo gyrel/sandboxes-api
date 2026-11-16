@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.0.28 — 2026-11-16
+
+### Changed
+
+- Remove the mandatory external release-review gate while retaining candidate validation, CI, and immutable tag protections.
+- Accept an `Unreleased` heading before the newest version during release validation.
+- Preserve API contract version 0.0.27; this release only changes release tooling.
+
 ## Unreleased — local RPC contract 0.0.27
 
 - Add non-secret metadata to `SecretSummary`: creation and update times,
