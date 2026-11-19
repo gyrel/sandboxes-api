@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.0.29 — 2026-11-19
+
+### Added
+
+- Add optional `SkillsOptions` to `CreateRequest` and `Sandbox` with explicit
+  `off`, `readonly` and `readwrite` modes plus a host store path. Omitted options
+  keep shared skills disabled.
+- Advance the local RPC contract version to 0.0.28. Downstream modules must bump
+  `github.com/rheic/sandboxes-api` to this release before using the field.
+
+### Compatibility
+
+- Adding two fields is wire-compatible for readers and writers that predate
+  shared skills; older daemons ignore the request field. Clients must gate the
+  option on API contract 0.0.28 so an older daemon is never asked to downgrade a
+  requested mode silently.
+
+
 ## v0.0.28 — 2026-11-16
 
 ### Changed
@@ -8,7 +26,7 @@
 - Accept an `Unreleased` heading before the newest version during release validation.
 - Preserve API contract version 0.0.27; this release only changes release tooling.
 
-## Unreleased — local RPC contract 0.0.27
+## Local RPC contract 0.0.27
 
 - Add non-secret metadata to `SecretSummary`: creation and update times,
   source kind, refresh policy and capability, coarse value type, and origin.
