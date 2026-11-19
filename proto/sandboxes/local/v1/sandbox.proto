@@ -96,6 +96,8 @@ message Sandbox {
   string policy_profile = 21;
   // Clone metadata. GitEndpoint is present only while the guest is running.
   CloneInfo clone_info = 22;
+  // Shared skills configuration selected when the sandbox was created.
+  SkillsOptions skills = 23;
 }
 
 message Operation {
@@ -133,6 +135,24 @@ message CreateRequest {
   repeated OAuthCredential oauth_credentials = 16;
   // Clone an existing workspace into an isolated guest workspace.
   CloneOptions clone = 17;
+  // Omitted means shared skills are disabled. The daemon must reject unknown
+  // modes and cannot silently downgrade a requested read-only mount.
+  SkillsOptions skills = 18;
+}
+
+enum SkillsMode {
+  SKILLS_MODE_UNSPECIFIED = 0;
+  SKILLS_MODE_OFF = 1;
+  SKILLS_MODE_READONLY = 2;
+  SKILLS_MODE_READWRITE = 3;
+}
+
+// SkillsOptions grants a sandbox access to a host skills store. The store path
+// is host-side only and must be a real directory. Read-write access allows the
+// guest to alter skills consumed by other sandboxes. Off requires an empty path.
+message SkillsOptions {
+  SkillsMode mode = 1;
+  string store_path = 2;
 }
 
 // CloneOptions describes the host source workspace and optional guest working
