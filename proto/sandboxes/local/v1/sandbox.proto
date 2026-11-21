@@ -53,6 +53,28 @@ message NetworkRule {
   // sandbox-scoped rules, "org" for a signed organization policy bundle.
   // Older daemons leave this empty, which clients must treat as local.
   string origin = 6;
+  // Methods restrict the rule to specific HTTP request methods (case-
+  // insensitive, canonicalized upper-case by the daemon; "ANY" matches every
+  // method but still marks the rule as HTTP-conditioned). Empty means no HTTP
+  // condition. Daemons at contract 0.0.31+ validate and enforce these via the
+  // gateway policy engine; older daemons reject rules carrying any HTTP
+  // condition (fail closed) rather than silently ignoring it.
+  repeated string methods = 7;
+  // Path is a glob pattern over the percent-decoded request path. Segment
+  // boundaries are literal; "**" spans segments, "*" does not. Empty means no
+  // condition. A rule with an unevaluable path is refused at mutation time.
+  string path = 8;
+  // Query lists parameter conditions; every condition must match (name is
+  // exact, value is a glob over a decoded value). Multiple values for one name
+  // match when any value matches. Empty means no condition.
+  repeated HTTPQueryCondition query = 9;
+}
+
+// HTTPQueryCondition requires one HTTP query parameter name with a value
+// matching the supplied glob pattern.
+message HTTPQueryCondition {
+  string name = 1;
+  string value = 2;
 }
 
 message Port {
