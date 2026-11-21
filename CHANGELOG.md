@@ -1,5 +1,26 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `NetworkRule.methods`, `NetworkRule.path` and `NetworkRule.query`
+  (repeated `HTTPQueryCondition`) carry HTTP L7 policy conditions, matching
+  the gateway policy engine's semantics: methods are upper-cased and `ANY`
+  marks a rule HTTP-conditioned without relaxing non-HTTP traffic; `path` is
+  a segment-aware glob (`**` spans segments); every query condition must
+  match with an exact name and a glob value. Local RPC contract advances to
+  0.0.31.
+
+### Compatibility
+
+- Additive proto fields; readers predating this release ignore them.
+  Daemons before contract 0.0.31 must reject rules carrying HTTP conditions
+  rather than silently treating them as plain domain allows (fail closed).
+- The module tag `v0.0.30` (contract 0.0.30, account `username`, and
+  contract 0.0.29, `Operation.progress`) shipped without changelog entries;
+  this section covers the contract line from 0.0.29 forward.
+
 ## v0.0.29 — 2026-11-19
 
 ### Added
