@@ -100,6 +100,17 @@ message Sandbox {
   SkillsOptions skills = 23;
 }
 
+// Progress carries a transient, human-resumable view of a long-running
+// operation phase. It is advisory display data, never an authorization or
+// state signal: consumers must key lifecycle off Operation.state.
+message Progress {
+  // Machine-readable phase, e.g. "pulling", "finalizing", "starting". Empty
+  // means no progress is currently known.
+  string phase = 1;
+  int64 completed = 2;
+  int64 total = 3;
+}
+
 message Operation {
   string id = 1;
   string sandbox_id = 2;
@@ -109,6 +120,9 @@ message Operation {
   string error = 6;
   int64 created_at_unix = 7;
   int64 updated_at_unix = 8;
+  // Transient progress for in-flight operations. Absent for daemons predating
+  // contract 0.0.26 and for terminal operations.
+  Progress progress = 9;
 }
 
 message CreateRequest {
@@ -503,6 +517,11 @@ message AccountServiceStatusResponse {
   // refresh_coordinated reports that the daemon coordinates refresh for this
   // credential (single-flight rotation); false means no refresh is scheduled.
   bool refresh_coordinated = 4;
+  // username is the signed-in account label when the daemon stored one at
+  // login (device OAuth or Docker Hub PAT). It is a display identity, not a
+  // secret; token material and expiry remain unexposed. Empty for daemons
+  // predating contract 0.0.30 and providers without a stored label.
+  string username = 5;
 }
 
 // The device-login stream keeps the device code on the daemon. The user code
