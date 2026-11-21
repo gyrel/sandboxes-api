@@ -517,6 +517,11 @@ message AccountServiceStatusResponse {
   // refresh_coordinated reports that the daemon coordinates refresh for this
   // credential (single-flight rotation); false means no refresh is scheduled.
   bool refresh_coordinated = 4;
+  // username is the signed-in account label when the daemon stored one at
+  // login (device OAuth or Docker Hub PAT). It is a display identity, not a
+  // secret; token material and expiry remain unexposed. Empty for daemons
+  // predating contract 0.0.30 and providers without a stored label.
+  string username = 5;
 }
 
 // The device-login stream keeps the device code on the daemon. The user code

@@ -4443,8 +4443,13 @@ type AccountServiceStatusResponse struct {
 	// refresh_coordinated reports that the daemon coordinates refresh for this
 	// credential (single-flight rotation); false means no refresh is scheduled.
 	RefreshCoordinated bool `protobuf:"varint,4,opt,name=refresh_coordinated,json=refreshCoordinated,proto3" json:"refresh_coordinated,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	// username is the signed-in account label when the daemon stored one at
+	// login (device OAuth or Docker Hub PAT). It is a display identity, not a
+	// secret; token material and expiry remain unexposed. Empty for daemons
+	// predating contract 0.0.30 and providers without a stored label.
+	Username      string `protobuf:"bytes,5,opt,name=username,proto3" json:"username,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AccountServiceStatusResponse) Reset() {
@@ -4503,6 +4508,13 @@ func (x *AccountServiceStatusResponse) GetRefreshCoordinated() bool {
 		return x.RefreshCoordinated
 	}
 	return false
+}
+
+func (x *AccountServiceStatusResponse) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
 }
 
 // The device-login stream keeps the device code on the daemon. The user code
@@ -7103,12 +7115,13 @@ const file_sandboxes_local_v1_sandbox_proto_rawDesc = "" +
 	"\x1cAccountServiceLogoutResponse\x12\x18\n" +
 	"\aremoved\x18\x01 \x01(\bR\aremoved\"9\n" +
 	"\x1bAccountServiceStatusRequest\x12\x1a\n" +
-	"\bprovider\x18\x01 \x01(\tR\bprovider\"\xc3\x01\n" +
+	"\bprovider\x18\x01 \x01(\tR\bprovider\"\xdf\x01\n" +
 	"\x1cAccountServiceStatusResponse\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12-\n" +
 	"\x12credential_present\x18\x02 \x01(\bR\x11credentialPresent\x12'\n" +
 	"\x0frefresh_present\x18\x03 \x01(\bR\x0erefreshPresent\x12/\n" +
-	"\x13refresh_coordinated\x18\x04 \x01(\bR\x12refreshCoordinated\"t\n" +
+	"\x13refresh_coordinated\x18\x04 \x01(\bR\x12refreshCoordinated\x12\x1a\n" +
+	"\busername\x18\x05 \x01(\tR\busername\"t\n" +
 	" AccountServiceLoginDeviceRequest\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x124\n" +
 	"\x16continue_after_handoff\x18\x02 \x01(\bR\x14continueAfterHandoff\"\x91\x01\n" +
