@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Added (contract 0.0.35)
+
+- `TemplateService.Export` RPC (`TemplateServiceExportRequest{name,
+  tar_path}` → `{size_bytes}`): docker-save export of a recorded template;
+  existing destination files are refused. (Contract 0.0.34 shipped without
+  this RPC due to a changelog-only merge; 0.0.35 carries the intended
+  additive surface.)
+
+## Unreleased
+
 ### Added (contract 0.0.33)
 
 - `TemplateService` (Save/Load/Remove/List/Inspect) with `Template`

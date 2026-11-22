@@ -7449,6 +7449,104 @@ func (x *TemplateServiceInspectRequest) GetName() string {
 	return ""
 }
 
+type TemplateServiceExportRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// TarPath is the host destination for the docker-save archive; existing
+	// files are never overwritten.
+	TarPath       string `protobuf:"bytes,2,opt,name=tar_path,json=tarPath,proto3" json:"tar_path,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TemplateServiceExportRequest) Reset() {
+	*x = TemplateServiceExportRequest{}
+	mi := &file_sandboxes_local_v1_sandbox_proto_msgTypes[115]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TemplateServiceExportRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TemplateServiceExportRequest) ProtoMessage() {}
+
+func (x *TemplateServiceExportRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_sandboxes_local_v1_sandbox_proto_msgTypes[115]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TemplateServiceExportRequest.ProtoReflect.Descriptor instead.
+func (*TemplateServiceExportRequest) Descriptor() ([]byte, []int) {
+	return file_sandboxes_local_v1_sandbox_proto_rawDescGZIP(), []int{115}
+}
+
+func (x *TemplateServiceExportRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *TemplateServiceExportRequest) GetTarPath() string {
+	if x != nil {
+		return x.TarPath
+	}
+	return ""
+}
+
+type TemplateServiceExportResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SizeBytes     int64                  `protobuf:"varint,1,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TemplateServiceExportResponse) Reset() {
+	*x = TemplateServiceExportResponse{}
+	mi := &file_sandboxes_local_v1_sandbox_proto_msgTypes[116]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TemplateServiceExportResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TemplateServiceExportResponse) ProtoMessage() {}
+
+func (x *TemplateServiceExportResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_sandboxes_local_v1_sandbox_proto_msgTypes[116]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TemplateServiceExportResponse.ProtoReflect.Descriptor instead.
+func (*TemplateServiceExportResponse) Descriptor() ([]byte, []int) {
+	return file_sandboxes_local_v1_sandbox_proto_rawDescGZIP(), []int{116}
+}
+
+func (x *TemplateServiceExportResponse) GetSizeBytes() int64 {
+	if x != nil {
+		return x.SizeBytes
+	}
+	return 0
+}
+
 type TemplateServiceInspectResponse struct {
 	state    protoimpl.MessageState `protogen:"open.v1"`
 	Template *Template              `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
@@ -7464,7 +7562,7 @@ type TemplateServiceInspectResponse struct {
 
 func (x *TemplateServiceInspectResponse) Reset() {
 	*x = TemplateServiceInspectResponse{}
-	mi := &file_sandboxes_local_v1_sandbox_proto_msgTypes[115]
+	mi := &file_sandboxes_local_v1_sandbox_proto_msgTypes[117]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7476,7 +7574,7 @@ func (x *TemplateServiceInspectResponse) String() string {
 func (*TemplateServiceInspectResponse) ProtoMessage() {}
 
 func (x *TemplateServiceInspectResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_sandboxes_local_v1_sandbox_proto_msgTypes[115]
+	mi := &file_sandboxes_local_v1_sandbox_proto_msgTypes[117]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7489,7 +7587,7 @@ func (x *TemplateServiceInspectResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TemplateServiceInspectResponse.ProtoReflect.Descriptor instead.
 func (*TemplateServiceInspectResponse) Descriptor() ([]byte, []int) {
-	return file_sandboxes_local_v1_sandbox_proto_rawDescGZIP(), []int{115}
+	return file_sandboxes_local_v1_sandbox_proto_rawDescGZIP(), []int{117}
 }
 
 func (x *TemplateServiceInspectResponse) GetTemplate() *Template {
@@ -8042,7 +8140,13 @@ const file_sandboxes_local_v1_sandbox_proto_rawDesc = "" +
 	"\x1bTemplateServiceListResponse\x12:\n" +
 	"\ttemplates\x18\x01 \x03(\v2\x1c.sandboxes.local.v1.TemplateR\ttemplates\"3\n" +
 	"\x1dTemplateServiceInspectRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\"\xac\x01\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\"M\n" +
+	"\x1cTemplateServiceExportRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x19\n" +
+	"\btar_path\x18\x02 \x01(\tR\atarPath\">\n" +
+	"\x1dTemplateServiceExportResponse\x12\x1d\n" +
+	"\n" +
+	"size_bytes\x18\x01 \x01(\x03R\tsizeBytes\"\xac\x01\n" +
 	"\x1eTemplateServiceInspectResponse\x128\n" +
 	"\btemplate\x18\x01 \x01(\v2\x1c.sandboxes.local.v1.TemplateR\btemplate\x12\x1b\n" +
 	"\tenv_names\x18\x02 \x03(\tR\benvNames\x12\x1f\n" +
@@ -8129,13 +8233,14 @@ const file_sandboxes_local_v1_sandbox_proto_rawDesc = "" +
 	"\vLoginDevice\x124.sandboxes.local.v1.AccountServiceLoginDeviceRequest\x1a5.sandboxes.local.v1.AccountServiceLoginDeviceResponse(\x010\x01\x12}\n" +
 	"\fLoginWithPAT\x125.sandboxes.local.v1.AccountServiceLoginWithPATRequest\x1a6.sandboxes.local.v1.AccountServiceLoginWithPATResponse\x12k\n" +
 	"\x06Logout\x12/.sandboxes.local.v1.AccountServiceLogoutRequest\x1a0.sandboxes.local.v1.AccountServiceLogoutResponse\x12k\n" +
-	"\x06Status\x12/.sandboxes.local.v1.AccountServiceStatusRequest\x1a0.sandboxes.local.v1.AccountServiceStatusResponse2\xad\x04\n" +
+	"\x06Status\x12/.sandboxes.local.v1.AccountServiceStatusRequest\x1a0.sandboxes.local.v1.AccountServiceStatusResponse2\x9c\x05\n" +
 	"\x0fTemplateService\x12g\n" +
 	"\x04Save\x12..sandboxes.local.v1.TemplateServiceSaveRequest\x1a/.sandboxes.local.v1.TemplateServiceSaveResponse\x12g\n" +
 	"\x04Load\x12..sandboxes.local.v1.TemplateServiceLoadRequest\x1a/.sandboxes.local.v1.TemplateServiceLoadResponse\x12m\n" +
 	"\x06Remove\x120.sandboxes.local.v1.TemplateServiceRemoveRequest\x1a1.sandboxes.local.v1.TemplateServiceRemoveResponse\x12g\n" +
 	"\x04List\x12..sandboxes.local.v1.TemplateServiceListRequest\x1a/.sandboxes.local.v1.TemplateServiceListResponse\x12p\n" +
-	"\aInspect\x121.sandboxes.local.v1.TemplateServiceInspectRequest\x1a2.sandboxes.local.v1.TemplateServiceInspectResponseBBZ@github.com/rheic/sandboxes-api/gen/go/sandboxes/local/v1;localv1b\x06proto3"
+	"\aInspect\x121.sandboxes.local.v1.TemplateServiceInspectRequest\x1a2.sandboxes.local.v1.TemplateServiceInspectResponse\x12m\n" +
+	"\x06Export\x120.sandboxes.local.v1.TemplateServiceExportRequest\x1a1.sandboxes.local.v1.TemplateServiceExportResponseBBZ@github.com/rheic/sandboxes-api/gen/go/sandboxes/local/v1;localv1b\x06proto3"
 
 var (
 	file_sandboxes_local_v1_sandbox_proto_rawDescOnce sync.Once
@@ -8150,7 +8255,7 @@ func file_sandboxes_local_v1_sandbox_proto_rawDescGZIP() []byte {
 }
 
 var file_sandboxes_local_v1_sandbox_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_sandboxes_local_v1_sandbox_proto_msgTypes = make([]protoimpl.MessageInfo, 119)
+var file_sandboxes_local_v1_sandbox_proto_msgTypes = make([]protoimpl.MessageInfo, 121)
 var file_sandboxes_local_v1_sandbox_proto_goTypes = []any{
 	(SandboxState)(0),                               // 0: sandboxes.local.v1.SandboxState
 	(OperationKind)(0),                              // 1: sandboxes.local.v1.OperationKind
@@ -8272,10 +8377,12 @@ var file_sandboxes_local_v1_sandbox_proto_goTypes = []any{
 	(*TemplateServiceListRequest)(nil),              // 117: sandboxes.local.v1.TemplateServiceListRequest
 	(*TemplateServiceListResponse)(nil),             // 118: sandboxes.local.v1.TemplateServiceListResponse
 	(*TemplateServiceInspectRequest)(nil),           // 119: sandboxes.local.v1.TemplateServiceInspectRequest
-	(*TemplateServiceInspectResponse)(nil),          // 120: sandboxes.local.v1.TemplateServiceInspectResponse
-	nil,                                             // 121: sandboxes.local.v1.CreateRequest.EnvEntry
-	nil,                                             // 122: sandboxes.local.v1.MCPRegisterServerRequest.HeadersEntry
-	nil,                                             // 123: sandboxes.local.v1.MCPRegisterServerRequest.SecretHeadersEntry
+	(*TemplateServiceExportRequest)(nil),            // 120: sandboxes.local.v1.TemplateServiceExportRequest
+	(*TemplateServiceExportResponse)(nil),           // 121: sandboxes.local.v1.TemplateServiceExportResponse
+	(*TemplateServiceInspectResponse)(nil),          // 122: sandboxes.local.v1.TemplateServiceInspectResponse
+	nil,                                             // 123: sandboxes.local.v1.CreateRequest.EnvEntry
+	nil,                                             // 124: sandboxes.local.v1.MCPRegisterServerRequest.HeadersEntry
+	nil,                                             // 125: sandboxes.local.v1.MCPRegisterServerRequest.SecretHeadersEntry
 }
 var file_sandboxes_local_v1_sandbox_proto_depIdxs = []int32{
 	6,   // 0: sandboxes.local.v1.NetworkRule.query:type_name -> sandboxes.local.v1.HTTPQueryCondition
@@ -8293,7 +8400,7 @@ var file_sandboxes_local_v1_sandbox_proto_depIdxs = []int32{
 	7,   // 12: sandboxes.local.v1.CreateRequest.ports:type_name -> sandboxes.local.v1.Port
 	5,   // 13: sandboxes.local.v1.CreateRequest.allow:type_name -> sandboxes.local.v1.NetworkRule
 	5,   // 14: sandboxes.local.v1.CreateRequest.deny:type_name -> sandboxes.local.v1.NetworkRule
-	121, // 15: sandboxes.local.v1.CreateRequest.env:type_name -> sandboxes.local.v1.CreateRequest.EnvEntry
+	123, // 15: sandboxes.local.v1.CreateRequest.env:type_name -> sandboxes.local.v1.CreateRequest.EnvEntry
 	17,  // 16: sandboxes.local.v1.CreateRequest.oauth_credentials:type_name -> sandboxes.local.v1.OAuthCredential
 	14,  // 17: sandboxes.local.v1.CreateRequest.clone:type_name -> sandboxes.local.v1.CloneOptions
 	13,  // 18: sandboxes.local.v1.CreateRequest.skills:type_name -> sandboxes.local.v1.SkillsOptions
@@ -8339,8 +8446,8 @@ var file_sandboxes_local_v1_sandbox_proto_depIdxs = []int32{
 	5,   // 58: sandboxes.local.v1.ResetGlobalPolicyResponse.allow:type_name -> sandboxes.local.v1.NetworkRule
 	5,   // 59: sandboxes.local.v1.ResetGlobalPolicyResponse.deny:type_name -> sandboxes.local.v1.NetworkRule
 	86,  // 60: sandboxes.local.v1.GetOrgPolicyResponse.rules:type_name -> sandboxes.local.v1.OrgPolicyRule
-	122, // 61: sandboxes.local.v1.MCPRegisterServerRequest.headers:type_name -> sandboxes.local.v1.MCPRegisterServerRequest.HeadersEntry
-	123, // 62: sandboxes.local.v1.MCPRegisterServerRequest.secret_headers:type_name -> sandboxes.local.v1.MCPRegisterServerRequest.SecretHeadersEntry
+	124, // 61: sandboxes.local.v1.MCPRegisterServerRequest.headers:type_name -> sandboxes.local.v1.MCPRegisterServerRequest.HeadersEntry
+	125, // 62: sandboxes.local.v1.MCPRegisterServerRequest.secret_headers:type_name -> sandboxes.local.v1.MCPRegisterServerRequest.SecretHeadersEntry
 	101, // 63: sandboxes.local.v1.MCPRegisterServerResponse.server:type_name -> sandboxes.local.v1.MCPServerSummary
 	101, // 64: sandboxes.local.v1.MCPApproveRegistrationResponse.server:type_name -> sandboxes.local.v1.MCPServerSummary
 	101, // 65: sandboxes.local.v1.ListMCPServersResponse.servers:type_name -> sandboxes.local.v1.MCPServerSummary
@@ -8394,54 +8501,56 @@ var file_sandboxes_local_v1_sandbox_proto_depIdxs = []int32{
 	115, // 113: sandboxes.local.v1.TemplateService.Remove:input_type -> sandboxes.local.v1.TemplateServiceRemoveRequest
 	117, // 114: sandboxes.local.v1.TemplateService.List:input_type -> sandboxes.local.v1.TemplateServiceListRequest
 	119, // 115: sandboxes.local.v1.TemplateService.Inspect:input_type -> sandboxes.local.v1.TemplateServiceInspectRequest
-	33,  // 116: sandboxes.local.v1.SandboxService.Create:output_type -> sandboxes.local.v1.CreateResponse
-	105, // 117: sandboxes.local.v1.SandboxService.GetVersion:output_type -> sandboxes.local.v1.GetVersionResponse
-	24,  // 118: sandboxes.local.v1.SandboxService.Get:output_type -> sandboxes.local.v1.GetResponse
-	25,  // 119: sandboxes.local.v1.SandboxService.List:output_type -> sandboxes.local.v1.ListResponse
-	34,  // 120: sandboxes.local.v1.SandboxService.Start:output_type -> sandboxes.local.v1.StartResponse
-	35,  // 121: sandboxes.local.v1.SandboxService.Stop:output_type -> sandboxes.local.v1.StopResponse
-	36,  // 122: sandboxes.local.v1.SandboxService.Delete:output_type -> sandboxes.local.v1.DeleteResponse
-	32,  // 123: sandboxes.local.v1.SandboxService.Watch:output_type -> sandboxes.local.v1.WatchResponse
-	38,  // 124: sandboxes.local.v1.SandboxService.Exec:output_type -> sandboxes.local.v1.ExecResponse
-	42,  // 125: sandboxes.local.v1.SandboxService.ExecSession:output_type -> sandboxes.local.v1.ExecSessionResponse
-	73,  // 126: sandboxes.local.v1.SandboxService.UpdatePolicy:output_type -> sandboxes.local.v1.UpdatePolicyResponse
-	75,  // 127: sandboxes.local.v1.SandboxService.MutatePolicy:output_type -> sandboxes.local.v1.MutatePolicyResponse
-	77,  // 128: sandboxes.local.v1.SandboxService.UpdatePorts:output_type -> sandboxes.local.v1.UpdatePortsResponse
-	107, // 129: sandboxes.local.v1.SandboxService.GetPolicyProfile:output_type -> sandboxes.local.v1.GetPolicyProfileResponse
-	109, // 130: sandboxes.local.v1.SandboxService.SetPolicyProfile:output_type -> sandboxes.local.v1.SetPolicyProfileResponse
-	79,  // 131: sandboxes.local.v1.SandboxService.GetGlobalPolicy:output_type -> sandboxes.local.v1.GetGlobalPolicyResponse
-	81,  // 132: sandboxes.local.v1.SandboxService.MutateGlobalPolicy:output_type -> sandboxes.local.v1.MutateGlobalPolicyResponse
-	90,  // 133: sandboxes.local.v1.SandboxService.CheckPolicy:output_type -> sandboxes.local.v1.CheckPolicyResponse
-	103, // 134: sandboxes.local.v1.SandboxService.ListMCPServers:output_type -> sandboxes.local.v1.ListMCPServersResponse
-	96,  // 135: sandboxes.local.v1.SandboxService.MCPRegisterServer:output_type -> sandboxes.local.v1.MCPRegisterServerResponse
-	98,  // 136: sandboxes.local.v1.SandboxService.MCPApproveRegistration:output_type -> sandboxes.local.v1.MCPApproveRegistrationResponse
-	100, // 137: sandboxes.local.v1.SandboxService.MCPRemoveServer:output_type -> sandboxes.local.v1.MCPRemoveServerResponse
-	92,  // 138: sandboxes.local.v1.SandboxService.MCPCall:output_type -> sandboxes.local.v1.MCPCallResponse
-	94,  // 139: sandboxes.local.v1.SandboxService.MCPApproveCall:output_type -> sandboxes.local.v1.MCPApproveCallResponse
-	83,  // 140: sandboxes.local.v1.SandboxService.RefreshPolicies:output_type -> sandboxes.local.v1.RefreshPoliciesResponse
-	85,  // 141: sandboxes.local.v1.SandboxService.ResetGlobalPolicy:output_type -> sandboxes.local.v1.ResetGlobalPolicyResponse
-	88,  // 142: sandboxes.local.v1.SandboxService.GetOrgPolicy:output_type -> sandboxes.local.v1.GetOrgPolicyResponse
-	43,  // 143: sandboxes.local.v1.OperationService.Get:output_type -> sandboxes.local.v1.OperationServiceGetResponse
-	44,  // 144: sandboxes.local.v1.OperationService.Wait:output_type -> sandboxes.local.v1.OperationServiceWaitResponse
-	46,  // 145: sandboxes.local.v1.RegistryCredentialService.Login:output_type -> sandboxes.local.v1.RegistryCredentialServiceLoginResponse
-	51,  // 146: sandboxes.local.v1.RegistryCredentialService.Logout:output_type -> sandboxes.local.v1.RegistryCredentialServiceLogoutResponse
-	50,  // 147: sandboxes.local.v1.RegistryCredentialService.List:output_type -> sandboxes.local.v1.RegistryCredentialServiceListResponse
-	55,  // 148: sandboxes.local.v1.SecretService.Set:output_type -> sandboxes.local.v1.SecretServiceSetResponse
-	57,  // 149: sandboxes.local.v1.SecretService.Create:output_type -> sandboxes.local.v1.SecretServiceCreateResponse
-	59,  // 150: sandboxes.local.v1.SecretService.List:output_type -> sandboxes.local.v1.SecretServiceListResponse
-	61,  // 151: sandboxes.local.v1.SecretService.Remove:output_type -> sandboxes.local.v1.SecretServiceRemoveResponse
-	63,  // 152: sandboxes.local.v1.AccountService.Login:output_type -> sandboxes.local.v1.AccountServiceLoginResponse
-	71,  // 153: sandboxes.local.v1.AccountService.LoginDevice:output_type -> sandboxes.local.v1.AccountServiceLoginDeviceResponse
-	65,  // 154: sandboxes.local.v1.AccountService.LoginWithPAT:output_type -> sandboxes.local.v1.AccountServiceLoginWithPATResponse
-	67,  // 155: sandboxes.local.v1.AccountService.Logout:output_type -> sandboxes.local.v1.AccountServiceLogoutResponse
-	69,  // 156: sandboxes.local.v1.AccountService.Status:output_type -> sandboxes.local.v1.AccountServiceStatusResponse
-	112, // 157: sandboxes.local.v1.TemplateService.Save:output_type -> sandboxes.local.v1.TemplateServiceSaveResponse
-	114, // 158: sandboxes.local.v1.TemplateService.Load:output_type -> sandboxes.local.v1.TemplateServiceLoadResponse
-	116, // 159: sandboxes.local.v1.TemplateService.Remove:output_type -> sandboxes.local.v1.TemplateServiceRemoveResponse
-	118, // 160: sandboxes.local.v1.TemplateService.List:output_type -> sandboxes.local.v1.TemplateServiceListResponse
-	120, // 161: sandboxes.local.v1.TemplateService.Inspect:output_type -> sandboxes.local.v1.TemplateServiceInspectResponse
-	116, // [116:162] is the sub-list for method output_type
-	70,  // [70:116] is the sub-list for method input_type
+	120, // 116: sandboxes.local.v1.TemplateService.Export:input_type -> sandboxes.local.v1.TemplateServiceExportRequest
+	33,  // 117: sandboxes.local.v1.SandboxService.Create:output_type -> sandboxes.local.v1.CreateResponse
+	105, // 118: sandboxes.local.v1.SandboxService.GetVersion:output_type -> sandboxes.local.v1.GetVersionResponse
+	24,  // 119: sandboxes.local.v1.SandboxService.Get:output_type -> sandboxes.local.v1.GetResponse
+	25,  // 120: sandboxes.local.v1.SandboxService.List:output_type -> sandboxes.local.v1.ListResponse
+	34,  // 121: sandboxes.local.v1.SandboxService.Start:output_type -> sandboxes.local.v1.StartResponse
+	35,  // 122: sandboxes.local.v1.SandboxService.Stop:output_type -> sandboxes.local.v1.StopResponse
+	36,  // 123: sandboxes.local.v1.SandboxService.Delete:output_type -> sandboxes.local.v1.DeleteResponse
+	32,  // 124: sandboxes.local.v1.SandboxService.Watch:output_type -> sandboxes.local.v1.WatchResponse
+	38,  // 125: sandboxes.local.v1.SandboxService.Exec:output_type -> sandboxes.local.v1.ExecResponse
+	42,  // 126: sandboxes.local.v1.SandboxService.ExecSession:output_type -> sandboxes.local.v1.ExecSessionResponse
+	73,  // 127: sandboxes.local.v1.SandboxService.UpdatePolicy:output_type -> sandboxes.local.v1.UpdatePolicyResponse
+	75,  // 128: sandboxes.local.v1.SandboxService.MutatePolicy:output_type -> sandboxes.local.v1.MutatePolicyResponse
+	77,  // 129: sandboxes.local.v1.SandboxService.UpdatePorts:output_type -> sandboxes.local.v1.UpdatePortsResponse
+	107, // 130: sandboxes.local.v1.SandboxService.GetPolicyProfile:output_type -> sandboxes.local.v1.GetPolicyProfileResponse
+	109, // 131: sandboxes.local.v1.SandboxService.SetPolicyProfile:output_type -> sandboxes.local.v1.SetPolicyProfileResponse
+	79,  // 132: sandboxes.local.v1.SandboxService.GetGlobalPolicy:output_type -> sandboxes.local.v1.GetGlobalPolicyResponse
+	81,  // 133: sandboxes.local.v1.SandboxService.MutateGlobalPolicy:output_type -> sandboxes.local.v1.MutateGlobalPolicyResponse
+	90,  // 134: sandboxes.local.v1.SandboxService.CheckPolicy:output_type -> sandboxes.local.v1.CheckPolicyResponse
+	103, // 135: sandboxes.local.v1.SandboxService.ListMCPServers:output_type -> sandboxes.local.v1.ListMCPServersResponse
+	96,  // 136: sandboxes.local.v1.SandboxService.MCPRegisterServer:output_type -> sandboxes.local.v1.MCPRegisterServerResponse
+	98,  // 137: sandboxes.local.v1.SandboxService.MCPApproveRegistration:output_type -> sandboxes.local.v1.MCPApproveRegistrationResponse
+	100, // 138: sandboxes.local.v1.SandboxService.MCPRemoveServer:output_type -> sandboxes.local.v1.MCPRemoveServerResponse
+	92,  // 139: sandboxes.local.v1.SandboxService.MCPCall:output_type -> sandboxes.local.v1.MCPCallResponse
+	94,  // 140: sandboxes.local.v1.SandboxService.MCPApproveCall:output_type -> sandboxes.local.v1.MCPApproveCallResponse
+	83,  // 141: sandboxes.local.v1.SandboxService.RefreshPolicies:output_type -> sandboxes.local.v1.RefreshPoliciesResponse
+	85,  // 142: sandboxes.local.v1.SandboxService.ResetGlobalPolicy:output_type -> sandboxes.local.v1.ResetGlobalPolicyResponse
+	88,  // 143: sandboxes.local.v1.SandboxService.GetOrgPolicy:output_type -> sandboxes.local.v1.GetOrgPolicyResponse
+	43,  // 144: sandboxes.local.v1.OperationService.Get:output_type -> sandboxes.local.v1.OperationServiceGetResponse
+	44,  // 145: sandboxes.local.v1.OperationService.Wait:output_type -> sandboxes.local.v1.OperationServiceWaitResponse
+	46,  // 146: sandboxes.local.v1.RegistryCredentialService.Login:output_type -> sandboxes.local.v1.RegistryCredentialServiceLoginResponse
+	51,  // 147: sandboxes.local.v1.RegistryCredentialService.Logout:output_type -> sandboxes.local.v1.RegistryCredentialServiceLogoutResponse
+	50,  // 148: sandboxes.local.v1.RegistryCredentialService.List:output_type -> sandboxes.local.v1.RegistryCredentialServiceListResponse
+	55,  // 149: sandboxes.local.v1.SecretService.Set:output_type -> sandboxes.local.v1.SecretServiceSetResponse
+	57,  // 150: sandboxes.local.v1.SecretService.Create:output_type -> sandboxes.local.v1.SecretServiceCreateResponse
+	59,  // 151: sandboxes.local.v1.SecretService.List:output_type -> sandboxes.local.v1.SecretServiceListResponse
+	61,  // 152: sandboxes.local.v1.SecretService.Remove:output_type -> sandboxes.local.v1.SecretServiceRemoveResponse
+	63,  // 153: sandboxes.local.v1.AccountService.Login:output_type -> sandboxes.local.v1.AccountServiceLoginResponse
+	71,  // 154: sandboxes.local.v1.AccountService.LoginDevice:output_type -> sandboxes.local.v1.AccountServiceLoginDeviceResponse
+	65,  // 155: sandboxes.local.v1.AccountService.LoginWithPAT:output_type -> sandboxes.local.v1.AccountServiceLoginWithPATResponse
+	67,  // 156: sandboxes.local.v1.AccountService.Logout:output_type -> sandboxes.local.v1.AccountServiceLogoutResponse
+	69,  // 157: sandboxes.local.v1.AccountService.Status:output_type -> sandboxes.local.v1.AccountServiceStatusResponse
+	112, // 158: sandboxes.local.v1.TemplateService.Save:output_type -> sandboxes.local.v1.TemplateServiceSaveResponse
+	114, // 159: sandboxes.local.v1.TemplateService.Load:output_type -> sandboxes.local.v1.TemplateServiceLoadResponse
+	116, // 160: sandboxes.local.v1.TemplateService.Remove:output_type -> sandboxes.local.v1.TemplateServiceRemoveResponse
+	118, // 161: sandboxes.local.v1.TemplateService.List:output_type -> sandboxes.local.v1.TemplateServiceListResponse
+	122, // 162: sandboxes.local.v1.TemplateService.Inspect:output_type -> sandboxes.local.v1.TemplateServiceInspectResponse
+	121, // 163: sandboxes.local.v1.TemplateService.Export:output_type -> sandboxes.local.v1.TemplateServiceExportResponse
+	117, // [117:164] is the sub-list for method output_type
+	70,  // [70:117] is the sub-list for method input_type
 	70,  // [70:70] is the sub-list for extension type_name
 	70,  // [70:70] is the sub-list for extension extendee
 	0,   // [0:70] is the sub-list for field type_name
@@ -8475,7 +8584,7 @@ func file_sandboxes_local_v1_sandbox_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_sandboxes_local_v1_sandbox_proto_rawDesc), len(file_sandboxes_local_v1_sandbox_proto_rawDesc)),
 			NumEnums:      5,
-			NumMessages:   119,
+			NumMessages:   121,
 			NumExtensions: 0,
 			NumServices:   6,
 		},
