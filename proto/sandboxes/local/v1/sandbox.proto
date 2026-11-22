@@ -678,6 +678,16 @@ message CheckPolicyRequest {
   string address = 3;
   string domain = 4;
   uint32 port = 5;
+  // Url, when set, describes an HTTP(S) request target for L7 evaluation
+  // (matches the `policy check network` URL grammar): the daemon parses it
+  // into host/port/path/query and applies the effective policy. It must be a
+  // bare absolute URL without credentials, fragment or unsafe characters;
+  // clients must not send secrets in it and daemons must not log the query.
+  string url = 6;
+  // Method optionally names the HTTP method for a URL check. Without it,
+  // rules conditioned on specific methods cannot be evaluated and fail to
+  // match (fail closed); ANY matches every method condition.
+  string method = 7;
 }
 
 message CheckPolicyResponse {
