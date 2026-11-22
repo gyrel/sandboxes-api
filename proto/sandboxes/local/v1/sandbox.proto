@@ -903,6 +903,7 @@ service TemplateService {
   rpc Remove(TemplateServiceRemoveRequest) returns (TemplateServiceRemoveResponse);
   rpc List(TemplateServiceListRequest) returns (TemplateServiceListResponse);
   rpc Inspect(TemplateServiceInspectRequest) returns (TemplateServiceInspectResponse);
+  rpc Export(TemplateServiceExportRequest) returns (TemplateServiceExportResponse);
 }
 
 // Template records local template images produced by `template save`.
@@ -968,6 +969,17 @@ message TemplateServiceListResponse {
 
 message TemplateServiceInspectRequest {
   string name = 1;
+}
+
+message TemplateServiceExportRequest {
+  string name = 1;
+  // TarPath is the host destination for the docker-save archive; existing
+  // files are never overwritten.
+  string tar_path = 2;
+}
+
+message TemplateServiceExportResponse {
+  int64 size_bytes = 1;
 }
 
 message TemplateServiceInspectResponse {

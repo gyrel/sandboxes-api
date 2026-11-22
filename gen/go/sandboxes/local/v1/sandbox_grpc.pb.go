@@ -1899,6 +1899,7 @@ const (
 	TemplateService_Remove_FullMethodName  = "/sandboxes.local.v1.TemplateService/Remove"
 	TemplateService_List_FullMethodName    = "/sandboxes.local.v1.TemplateService/List"
 	TemplateService_Inspect_FullMethodName = "/sandboxes.local.v1.TemplateService/Inspect"
+	TemplateService_Export_FullMethodName  = "/sandboxes.local.v1.TemplateService/Export"
 )
 
 // TemplateServiceClient is the client API for TemplateService service.
@@ -1910,6 +1911,7 @@ type TemplateServiceClient interface {
 	Remove(ctx context.Context, in *TemplateServiceRemoveRequest, opts ...grpc.CallOption) (*TemplateServiceRemoveResponse, error)
 	List(ctx context.Context, in *TemplateServiceListRequest, opts ...grpc.CallOption) (*TemplateServiceListResponse, error)
 	Inspect(ctx context.Context, in *TemplateServiceInspectRequest, opts ...grpc.CallOption) (*TemplateServiceInspectResponse, error)
+	Export(ctx context.Context, in *TemplateServiceExportRequest, opts ...grpc.CallOption) (*TemplateServiceExportResponse, error)
 }
 
 type templateServiceClient struct {
@@ -1970,6 +1972,16 @@ func (c *templateServiceClient) Inspect(ctx context.Context, in *TemplateService
 	return out, nil
 }
 
+func (c *templateServiceClient) Export(ctx context.Context, in *TemplateServiceExportRequest, opts ...grpc.CallOption) (*TemplateServiceExportResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TemplateServiceExportResponse)
+	err := c.cc.Invoke(ctx, TemplateService_Export_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TemplateServiceServer is the server API for TemplateService service.
 // All implementations must embed UnimplementedTemplateServiceServer
 // for forward compatibility.
@@ -1979,6 +1991,7 @@ type TemplateServiceServer interface {
 	Remove(context.Context, *TemplateServiceRemoveRequest) (*TemplateServiceRemoveResponse, error)
 	List(context.Context, *TemplateServiceListRequest) (*TemplateServiceListResponse, error)
 	Inspect(context.Context, *TemplateServiceInspectRequest) (*TemplateServiceInspectResponse, error)
+	Export(context.Context, *TemplateServiceExportRequest) (*TemplateServiceExportResponse, error)
 	mustEmbedUnimplementedTemplateServiceServer()
 }
 
@@ -2003,6 +2016,9 @@ func (UnimplementedTemplateServiceServer) List(context.Context, *TemplateService
 }
 func (UnimplementedTemplateServiceServer) Inspect(context.Context, *TemplateServiceInspectRequest) (*TemplateServiceInspectResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Inspect not implemented")
+}
+func (UnimplementedTemplateServiceServer) Export(context.Context, *TemplateServiceExportRequest) (*TemplateServiceExportResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Export not implemented")
 }
 func (UnimplementedTemplateServiceServer) mustEmbedUnimplementedTemplateServiceServer() {}
 func (UnimplementedTemplateServiceServer) testEmbeddedByValue()                         {}
@@ -2115,6 +2131,24 @@ func _TemplateService_Inspect_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TemplateService_Export_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TemplateServiceExportRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).Export(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_Export_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).Export(ctx, req.(*TemplateServiceExportRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TemplateService_ServiceDesc is the grpc.ServiceDesc for TemplateService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2141,6 +2175,10 @@ var TemplateService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Inspect",
 			Handler:    _TemplateService_Inspect_Handler,
+		},
+		{
+			MethodName: "Export",
+			Handler:    _TemplateService_Export_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
