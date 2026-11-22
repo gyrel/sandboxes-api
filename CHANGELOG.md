@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Added (contract 0.0.32)
+
+- `CheckPolicyRequest.url` and `.method` let `policy check network` evaluate
+  an HTTP(S) request target against the effective policy. Credentials and
+  fragments are rejected; the query string is never logged.
+
 ### Added
 
 - `NetworkRule.methods`, `NetworkRule.path` and `NetworkRule.query`

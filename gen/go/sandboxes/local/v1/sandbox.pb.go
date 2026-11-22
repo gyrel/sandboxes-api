@@ -5694,12 +5694,22 @@ func (x *GetOrgPolicyResponse) GetIgnoredRules() int32 {
 }
 
 type CheckPolicyRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SandboxId     string                 `protobuf:"bytes,1,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
-	Protocol      string                 `protobuf:"bytes,2,opt,name=protocol,proto3" json:"protocol,omitempty"`
-	Address       string                 `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
-	Domain        string                 `protobuf:"bytes,4,opt,name=domain,proto3" json:"domain,omitempty"`
-	Port          uint32                 `protobuf:"varint,5,opt,name=port,proto3" json:"port,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	SandboxId string                 `protobuf:"bytes,1,opt,name=sandbox_id,json=sandboxId,proto3" json:"sandbox_id,omitempty"`
+	Protocol  string                 `protobuf:"bytes,2,opt,name=protocol,proto3" json:"protocol,omitempty"`
+	Address   string                 `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
+	Domain    string                 `protobuf:"bytes,4,opt,name=domain,proto3" json:"domain,omitempty"`
+	Port      uint32                 `protobuf:"varint,5,opt,name=port,proto3" json:"port,omitempty"`
+	// Url, when set, describes an HTTP(S) request target for L7 evaluation
+	// (matches the `policy check network` URL grammar): the daemon parses it
+	// into host/port/path/query and applies the effective policy. It must be a
+	// bare absolute URL without credentials, fragment or unsafe characters;
+	// clients must not send secrets in it and daemons must not log the query.
+	Url string `protobuf:"bytes,6,opt,name=url,proto3" json:"url,omitempty"`
+	// Method optionally names the HTTP method for a URL check. Without it,
+	// rules conditioned on specific methods cannot be evaluated and fail to
+	// match (fail closed); ANY matches every method condition.
+	Method        string `protobuf:"bytes,7,opt,name=method,proto3" json:"method,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5767,6 +5777,20 @@ func (x *CheckPolicyRequest) GetPort() uint32 {
 		return x.Port
 	}
 	return 0
+}
+
+func (x *CheckPolicyRequest) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *CheckPolicyRequest) GetMethod() string {
+	if x != nil {
+		return x.Method
+	}
+	return ""
 }
 
 type CheckPolicyResponse struct {
@@ -7285,14 +7309,16 @@ const file_sandboxes_local_v1_sandbox_proto_rawDesc = "" +
 	"\x0fexpires_at_unix\x18\b \x01(\x03R\rexpiresAtUnix\x127\n" +
 	"\x05rules\x18\t \x03(\v2!.sandboxes.local.v1.OrgPolicyRuleR\x05rules\x12#\n" +
 	"\rignored_rules\x18\n" +
-	" \x01(\x05R\fignoredRules\"\x95\x01\n" +
+	" \x01(\x05R\fignoredRules\"\xbf\x01\n" +
 	"\x12CheckPolicyRequest\x12\x1d\n" +
 	"\n" +
 	"sandbox_id\x18\x01 \x01(\tR\tsandboxId\x12\x1a\n" +
 	"\bprotocol\x18\x02 \x01(\tR\bprotocol\x12\x18\n" +
 	"\aaddress\x18\x03 \x01(\tR\aaddress\x12\x16\n" +
 	"\x06domain\x18\x04 \x01(\tR\x06domain\x12\x12\n" +
-	"\x04port\x18\x05 \x01(\rR\x04port\"`\n" +
+	"\x04port\x18\x05 \x01(\rR\x04port\x12\x10\n" +
+	"\x03url\x18\x06 \x01(\tR\x03url\x12\x16\n" +
+	"\x06method\x18\a \x01(\tR\x06method\"`\n" +
 	"\x13CheckPolicyResponse\x12\x18\n" +
 	"\aallowed\x18\x01 \x01(\bR\aallowed\x12\x17\n" +
 	"\arule_id\x18\x02 \x01(\tR\x06ruleId\x12\x16\n" +
