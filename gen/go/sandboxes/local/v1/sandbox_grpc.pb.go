@@ -1892,3 +1892,257 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 	},
 	Metadata: "sandboxes/local/v1/sandbox.proto",
 }
+
+const (
+	TemplateService_Save_FullMethodName    = "/sandboxes.local.v1.TemplateService/Save"
+	TemplateService_Load_FullMethodName    = "/sandboxes.local.v1.TemplateService/Load"
+	TemplateService_Remove_FullMethodName  = "/sandboxes.local.v1.TemplateService/Remove"
+	TemplateService_List_FullMethodName    = "/sandboxes.local.v1.TemplateService/List"
+	TemplateService_Inspect_FullMethodName = "/sandboxes.local.v1.TemplateService/Inspect"
+)
+
+// TemplateServiceClient is the client API for TemplateService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type TemplateServiceClient interface {
+	Save(ctx context.Context, in *TemplateServiceSaveRequest, opts ...grpc.CallOption) (*TemplateServiceSaveResponse, error)
+	Load(ctx context.Context, in *TemplateServiceLoadRequest, opts ...grpc.CallOption) (*TemplateServiceLoadResponse, error)
+	Remove(ctx context.Context, in *TemplateServiceRemoveRequest, opts ...grpc.CallOption) (*TemplateServiceRemoveResponse, error)
+	List(ctx context.Context, in *TemplateServiceListRequest, opts ...grpc.CallOption) (*TemplateServiceListResponse, error)
+	Inspect(ctx context.Context, in *TemplateServiceInspectRequest, opts ...grpc.CallOption) (*TemplateServiceInspectResponse, error)
+}
+
+type templateServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewTemplateServiceClient(cc grpc.ClientConnInterface) TemplateServiceClient {
+	return &templateServiceClient{cc}
+}
+
+func (c *templateServiceClient) Save(ctx context.Context, in *TemplateServiceSaveRequest, opts ...grpc.CallOption) (*TemplateServiceSaveResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TemplateServiceSaveResponse)
+	err := c.cc.Invoke(ctx, TemplateService_Save_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *templateServiceClient) Load(ctx context.Context, in *TemplateServiceLoadRequest, opts ...grpc.CallOption) (*TemplateServiceLoadResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TemplateServiceLoadResponse)
+	err := c.cc.Invoke(ctx, TemplateService_Load_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *templateServiceClient) Remove(ctx context.Context, in *TemplateServiceRemoveRequest, opts ...grpc.CallOption) (*TemplateServiceRemoveResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TemplateServiceRemoveResponse)
+	err := c.cc.Invoke(ctx, TemplateService_Remove_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *templateServiceClient) List(ctx context.Context, in *TemplateServiceListRequest, opts ...grpc.CallOption) (*TemplateServiceListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TemplateServiceListResponse)
+	err := c.cc.Invoke(ctx, TemplateService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *templateServiceClient) Inspect(ctx context.Context, in *TemplateServiceInspectRequest, opts ...grpc.CallOption) (*TemplateServiceInspectResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TemplateServiceInspectResponse)
+	err := c.cc.Invoke(ctx, TemplateService_Inspect_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// TemplateServiceServer is the server API for TemplateService service.
+// All implementations must embed UnimplementedTemplateServiceServer
+// for forward compatibility.
+type TemplateServiceServer interface {
+	Save(context.Context, *TemplateServiceSaveRequest) (*TemplateServiceSaveResponse, error)
+	Load(context.Context, *TemplateServiceLoadRequest) (*TemplateServiceLoadResponse, error)
+	Remove(context.Context, *TemplateServiceRemoveRequest) (*TemplateServiceRemoveResponse, error)
+	List(context.Context, *TemplateServiceListRequest) (*TemplateServiceListResponse, error)
+	Inspect(context.Context, *TemplateServiceInspectRequest) (*TemplateServiceInspectResponse, error)
+	mustEmbedUnimplementedTemplateServiceServer()
+}
+
+// UnimplementedTemplateServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedTemplateServiceServer struct{}
+
+func (UnimplementedTemplateServiceServer) Save(context.Context, *TemplateServiceSaveRequest) (*TemplateServiceSaveResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Save not implemented")
+}
+func (UnimplementedTemplateServiceServer) Load(context.Context, *TemplateServiceLoadRequest) (*TemplateServiceLoadResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Load not implemented")
+}
+func (UnimplementedTemplateServiceServer) Remove(context.Context, *TemplateServiceRemoveRequest) (*TemplateServiceRemoveResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Remove not implemented")
+}
+func (UnimplementedTemplateServiceServer) List(context.Context, *TemplateServiceListRequest) (*TemplateServiceListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedTemplateServiceServer) Inspect(context.Context, *TemplateServiceInspectRequest) (*TemplateServiceInspectResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Inspect not implemented")
+}
+func (UnimplementedTemplateServiceServer) mustEmbedUnimplementedTemplateServiceServer() {}
+func (UnimplementedTemplateServiceServer) testEmbeddedByValue()                         {}
+
+// UnsafeTemplateServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TemplateServiceServer will
+// result in compilation errors.
+type UnsafeTemplateServiceServer interface {
+	mustEmbedUnimplementedTemplateServiceServer()
+}
+
+func RegisterTemplateServiceServer(s grpc.ServiceRegistrar, srv TemplateServiceServer) {
+	// If the following call panics, it indicates UnimplementedTemplateServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&TemplateService_ServiceDesc, srv)
+}
+
+func _TemplateService_Save_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TemplateServiceSaveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).Save(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_Save_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).Save(ctx, req.(*TemplateServiceSaveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TemplateService_Load_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TemplateServiceLoadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).Load(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_Load_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).Load(ctx, req.(*TemplateServiceLoadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TemplateService_Remove_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TemplateServiceRemoveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).Remove(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_Remove_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).Remove(ctx, req.(*TemplateServiceRemoveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TemplateService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TemplateServiceListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).List(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_List_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).List(ctx, req.(*TemplateServiceListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TemplateService_Inspect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TemplateServiceInspectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TemplateServiceServer).Inspect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TemplateService_Inspect_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TemplateServiceServer).Inspect(ctx, req.(*TemplateServiceInspectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// TemplateService_ServiceDesc is the grpc.ServiceDesc for TemplateService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var TemplateService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "sandboxes.local.v1.TemplateService",
+	HandlerType: (*TemplateServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Save",
+			Handler:    _TemplateService_Save_Handler,
+		},
+		{
+			MethodName: "Load",
+			Handler:    _TemplateService_Load_Handler,
+		},
+		{
+			MethodName: "Remove",
+			Handler:    _TemplateService_Remove_Handler,
+		},
+		{
+			MethodName: "List",
+			Handler:    _TemplateService_List_Handler,
+		},
+		{
+			MethodName: "Inspect",
+			Handler:    _TemplateService_Inspect_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "sandboxes/local/v1/sandbox.proto",
+}
