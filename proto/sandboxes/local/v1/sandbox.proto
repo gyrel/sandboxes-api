@@ -896,3 +896,86 @@ service AccountService {
   rpc Logout(AccountServiceLogoutRequest) returns (AccountServiceLogoutResponse);
   rpc Status(AccountServiceStatusRequest) returns (AccountServiceStatusResponse);
 }
+
+service TemplateService {
+  rpc Save(TemplateServiceSaveRequest) returns (TemplateServiceSaveResponse);
+  rpc Load(TemplateServiceLoadRequest) returns (TemplateServiceLoadResponse);
+  rpc Remove(TemplateServiceRemoveRequest) returns (TemplateServiceRemoveResponse);
+  rpc List(TemplateServiceListRequest) returns (TemplateServiceListResponse);
+  rpc Inspect(TemplateServiceInspectRequest) returns (TemplateServiceInspectResponse);
+}
+
+// Template records local template images produced by `template save`.
+// Names follow the normalized docker.io/library grammar; digests address
+// the assembled manifest.
+message Template {
+  string name = 1;
+  string digest = 2;
+  int64 size_bytes = 3;
+  int64 created_unix = 4;
+  // BaseImage is the image the recorded sandbox booted from.
+  string base_image = 5;
+  // Flavor carries the agent/template family inherited at save time.
+  string flavor = 6;
+  int32 layers = 7;
+}
+
+message TemplateServiceSaveRequest {
+  string sandbox_id = 1;
+  // Tag is the template name to create (normalized by the daemon).
+  string tag = 2;
+  // OutputPath optionally writes a docker-save compatible tar to the host
+  // path after recording the template; empty means record only.
+  string output_path = 3;
+}
+
+message TemplateServiceSaveResponse {
+  Template template = 1;
+  string output_path = 2;
+  // Notice is operator-facing guidance echoed by the CLI (for example the
+  // warning that guest-resident secrets are not exported). It never
+  // contains secret material.
+  string notice = 3;
+}
+
+message TemplateServiceLoadRequest {
+  // TarPath is a host file with an OCI or docker-save template archive.
+  string tar_path = 1;
+  // Name optionally overrides the archive tag; empty keeps the archived
+  // name.
+  string name = 2;
+}
+
+message TemplateServiceLoadResponse {
+  Template template = 1;
+}
+
+message TemplateServiceRemoveRequest {
+  string name = 1;
+  // Force skips the confirmation requirement encoded by callers; the
+  // daemon refuses removals of templates referenced by existing sandboxes
+  // regardless.
+  bool force = 2;
+}
+
+message TemplateServiceRemoveResponse {}
+
+message TemplateServiceListRequest {}
+
+message TemplateServiceListResponse {
+  repeated Template templates = 1;
+}
+
+message TemplateServiceInspectRequest {
+  string name = 1;
+}
+
+message TemplateServiceInspectResponse {
+  Template template = 1;
+  // Env, WorkingDir and User reconstruct the boot configuration. Env
+  // values are names-only: entries that could carry credential material
+  // are reported as NAME without a value (presence-only contract).
+  repeated string env_names = 2;
+  string working_dir = 3;
+  string user = 4;
+}

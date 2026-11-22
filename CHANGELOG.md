@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Added (contract 0.0.33)
+
+- `TemplateService` (Save/Load/Remove/List/Inspect) with `Template`
+  records: save optionally writes a docker-save compatible tar to a host
+  path and echoes a non-secret notice (guest-resident secrets are not
+  exported); load consumes OCI or docker-save archives with optional name
+  override; inspect returns name-only env entries plus working dir and
+  user (presence-only contract, no secret material).
+
 ### Added (contract 0.0.32)
 
 - `CheckPolicyRequest.url` and `.method` let `policy check network` evaluate
