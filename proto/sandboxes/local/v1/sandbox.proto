@@ -466,6 +466,13 @@ message SecretSummary {
   // Origin names where the entry came from. The local daemon currently writes
   // "local"; clients must treat an empty value as local.
   string origin = 10;
+  // Custom-secret placement metadata, empty for service secrets. EnvName and
+  // Hosts are non-secret configuration. PlaceholderMasked is a fixed-width mask
+  // that reveals at most the last four characters of the placeholder; the full
+  // placeholder is never returned.
+  string env_name = 11;
+  repeated string hosts = 12;
+  string placeholder_masked = 13;
 }
 
 message SecretServiceSetResponse {
@@ -498,6 +505,56 @@ message SecretServiceRemoveRequest {
 
 message SecretServiceRemoveResponse {
   bool removed = 1;
+}
+
+// SecretServiceSetCustomRequest creates or updates a custom secret that a
+// sandbox uses through a placeholder. The sandbox receives only the placeholder
+// in the Env variable. For requests to matching Hosts, the host proxy replaces
+// the placeholder in request headers with the real secret, so the real value
+// never enters the guest. Rheic is vault-only: there are no literal header
+// values.
+// Set exactly one of Value (inline, write-only, stored host-side) or Source
+// with a Reference or Command. Reference and command sources are resolved on
+// the host, and their first resolution requires a trusted host approval. A
+// daemon without a trusted OS-backed approval provider MUST fail closed for
+// these sources. Source.no_verify skips the initial resolver check but never
+// skips approval. Source.refresh is "on-demand" (the default when empty) or a
+// duration. The Value and resolver output never appear in responses, logs or
+// SQLite state, and placeholders are never returned in full.
+message SecretServiceSetCustomRequest {
+  // Service identity. When empty, the daemon derives it from the first host and
+  // returns the resolved name in SecretSummary.service.
+  string service = 1;
+  // Scope and sandbox_name use the same key semantics as
+  // SecretServiceSetRequest. An empty sandbox_name selects the global scope.
+  string scope = 2;
+  string sandbox_name = 3;
+  // Inline secret value. Write-only: it is stored host-side and never echoed.
+  bytes value = 4;
+  SecretSource source = 5;
+  // Sandbox environment variable that receives the placeholder value.
+  string env = 6;
+  // Explicit placeholder, or a template with a {rand} suffix that the daemon
+  // replaces with random characters. When empty, the daemon generates a unique
+  // placeholder. A placeholder must not contain or equal the real secret.
+  // Placeholders are not authority: they only select a vault entry for
+  // substitution on matching hosts.
+  string placeholder = 7;
+  // Exact DNS names, IP literals, or wildcard patterns, repeatable. "*"
+  // matches one label (*.example.com covers cli.example.com) and "**" matches
+  // any number of labels. The proxy substitutes only for matching hosts.
+  repeated string hosts = 8;
+}
+
+// SecretServiceSetCustomResponse never contains the secret value, the
+// placeholder, or resolver text. Secret is empty while approval is pending.
+message SecretServiceSetCustomResponse {
+  SecretSummary secret = 1;
+  // ApprovalRequired is true when a reference or command source waits for host
+  // approval. The secret is not stored until ApprovalService.Respond approves
+  // ApprovalID. This mirrors the MCP registration challenge pattern.
+  bool approval_required = 2;
+  string approval_id = 3;
 }
 
 message AccountServiceLoginRequest {
@@ -887,6 +944,7 @@ service SecretService {
   rpc Create(SecretServiceCreateRequest) returns (SecretServiceCreateResponse);
   rpc List(SecretServiceListRequest) returns (SecretServiceListResponse);
   rpc Remove(SecretServiceRemoveRequest) returns (SecretServiceRemoveResponse);
+  rpc SetCustom(SecretServiceSetCustomRequest) returns (SecretServiceSetCustomResponse);
 }
 
 service AccountService {
@@ -990,4 +1048,142 @@ message TemplateServiceInspectResponse {
   repeated string env_names = 2;
   string working_dir = 3;
   string user = 4;
+}
+
+// ApprovalKind classifies a host-side consent request. Secret command sources
+// use HOST_COMMAND and secret reference sources use OTHER. Daemons must map any
+// unrecognized source to OTHER rather than inventing a new kind.
+enum ApprovalKind {
+  APPROVAL_KIND_UNSPECIFIED = 0;
+  APPROVAL_KIND_HOST_COMMAND = 1;
+  APPROVAL_KIND_MCP_REGISTRATION = 2;
+  APPROVAL_KIND_MCP_CALL = 3;
+  APPROVAL_KIND_OTHER = 4;
+}
+
+enum ApprovalState {
+  APPROVAL_STATE_UNSPECIFIED = 0;
+  APPROVAL_STATE_PENDING = 1;
+  APPROVAL_STATE_APPROVED = 2;
+  APPROVAL_STATE_DENIED = 3;
+}
+
+// HeaderValueClass tells the user whether a header value comes from the host
+// vault or is a literal. Rheic is vault-only, so STATIC appears only to disclose
+// a non-compliant literal that a daemon found; it is never a valid way to supply
+// a value.
+enum HeaderValueClass {
+  HEADER_VALUE_CLASS_UNSPECIFIED = 0;
+  HEADER_VALUE_CLASS_STATIC = 1;
+  HEADER_VALUE_CLASS_VAULT = 2;
+}
+
+enum ApprovalDecision {
+  APPROVAL_DECISION_UNSPECIFIED = 0;
+  APPROVAL_DECISION_APPROVE = 1;
+  APPROVAL_DECISION_DENY = 2;
+}
+
+// ApprovalPersistScope selects whether a decision is stored as a rule. ONCE
+// applies the decision to this approval only. EXACT stores a rule with the same
+// decision for the approval's exact scope and requires a trusted OS-backed
+// approval provider.
+enum ApprovalPersistScope {
+  APPROVAL_PERSIST_SCOPE_UNSPECIFIED = 0;
+  APPROVAL_PERSIST_SCOPE_ONCE = 1;
+  APPROVAL_PERSIST_SCOPE_EXACT = 2;
+}
+
+// ApprovalHeader names one request header that the approval would send. Only
+// the name, its class and vault reference identifiers are disclosed. Header
+// values never cross this contract.
+message ApprovalHeader {
+  string name = 1;
+  HeaderValueClass value_class = 2;
+  // Opaque identifiers of host-vault entries that supply the value. These are
+  // identifiers, not secret material.
+  repeated string vault_reference_ids = 3;
+}
+
+// Approval is a pending or recently resolved host-side consent request.
+// Redaction obligations for every field: no value of any header, environment
+// variable, secret or token may appear here. DestinationHost and
+// DestinationPath carry no query, userinfo or fragment. ActionSummary,
+// CwdSummary and EnvNames must be redacted by the daemon before they are sent. The ID is the
+// challenge ID returned by SandboxService.MCPCall or MCPRegisterServer for MCP
+// kinds. Command text and arguments are never disclosed, because they may
+// contain secrets.
+message Approval {
+  string id = 1;
+  ApprovalKind kind = 2;
+  ApprovalState state = 3;
+  // Requesting sandbox.
+  string sandbox_id = 4;
+  // Short, human-readable, non-secret description of the action.
+  string action_summary = 5;
+  // Normalized HTTPS destination for network-shaped approvals. Empty otherwise.
+  string destination_host = 6;
+  string destination_path = 7;
+  // Header names and classes for network-shaped approvals; empty otherwise.
+  repeated ApprovalHeader headers = 8;
+  // Bounded environment variable NAMES only (values are never returned), for
+  // HOST_COMMAND approvals. The daemon returns at most 64 names, each at most
+  // 128 bytes. EnvNamesTruncated is set when more names exist.
+  repeated string env_names = 9;
+  bool env_names_truncated = 10;
+  // Redacted working-directory summary for HOST_COMMAND approvals, at most 256
+  // bytes. It is not an absolute host path.
+  string cwd_summary = 11;
+  int64 created_at_unix = 12;
+}
+
+// ApprovalService lists, inspects and resolves host-side approvals. A pending
+// approval is only consent-gathering state. Listing or inspecting one never
+// grants it.
+service ApprovalService {
+  rpc List(ApprovalServiceListRequest) returns (ApprovalServiceListResponse);
+  rpc Inspect(ApprovalServiceInspectRequest) returns (ApprovalServiceInspectResponse);
+  rpc Respond(ApprovalServiceRespondRequest) returns (ApprovalServiceRespondResponse);
+}
+
+// List returns pending approvals only. A non-empty SandboxId limits the result
+// to approvals requested by that sandbox. The daemon bounds the queue size.
+message ApprovalServiceListRequest {
+  string sandbox_id = 1;
+}
+
+message ApprovalServiceListResponse {
+  repeated Approval approvals = 1;
+}
+
+// Inspect returns one approval, including recently resolved ones within the
+// daemon's retention window. A non-empty SandboxId that does not match the
+// approval's sandbox returns NOT_FOUND.
+message ApprovalServiceInspectRequest {
+  string approval_id = 1;
+  string sandbox_id = 2;
+}
+
+message ApprovalServiceInspectResponse {
+  Approval approval = 1;
+}
+
+// Respond records a host-side decision. This RPC is not a consent grant by
+// itself: the daemon must obtain consent through its trusted host approval
+// provider and must never accept a boolean, challenge ID or caller identity as
+// consent. A daemon without a trusted OS-backed provider MUST fail closed:
+// it refuses every APPROVE and every EXACT persist with FAILED_PRECONDITION. It
+// must not downgrade either to ONCE or to a silent DENY. DENY is always accepted
+// for a pending approval. Decision UNSPECIFIED is INVALID_ARGUMENT, and
+// PersistScope UNSPECIFIED means ONCE.
+message ApprovalServiceRespondRequest {
+  string approval_id = 1;
+  ApprovalDecision decision = 2;
+  ApprovalPersistScope persist_scope = 3;
+}
+
+message ApprovalServiceRespondResponse {
+  Approval approval = 1;
+  // PersistedRuleID is set only when an EXACT rule was stored.
+  string persisted_rule_id = 2;
 }
