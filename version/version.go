@@ -6,4 +6,4 @@ package version
 const Version = "0.0.36"
 
 // SourceSHA256 fingerprints the local sandbox contract used to generate bindings.
-const SourceSHA256 = "98b24b134cdbc5ca47dd4a937e3e068bffca212b6a29c1985ce491c0e4fb6c40"
+const SourceSHA256 = "b6335a46a9c15844233e067ae9843596a1215df6c3e30bc76775b1642c9b2337"

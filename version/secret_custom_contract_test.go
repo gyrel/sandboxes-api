@@ -42,11 +42,25 @@ func TestSecretSetCustomContractIsAdditive(t *testing.T) {
 			t.Fatalf("SecretSummary.%s field %d is missing or renumbered", name, number)
 		}
 	}
-	for _, descriptor := range []protoreflect.MessageDescriptor{summary, (&localv1.SecretServiceSetCustomResponse{}).ProtoReflect().Descriptor()} {
-		for _, forbidden := range []protoreflect.Name{"value", "placeholder", "secret_value", "password", "token"} {
+	// Owner decision 2026-11-24: the set-custom write response echoes the
+	// resolved placeholder in full (the baseline CLI prints the generated
+	// value; the placeholder is not authority and the guest already receives
+	// the same string in its environment). Inventories stay masked. No field
+	// anywhere may carry a secret value.
+	response := (&localv1.SecretServiceSetCustomResponse{}).ProtoReflect().Descriptor()
+	if f := response.Fields().ByName("placeholder"); f == nil || f.Number() != 4 {
+		t.Fatalf("SecretServiceSetCustomResponse.placeholder field 4 is missing or renumbered")
+	}
+	for _, descriptor := range []protoreflect.MessageDescriptor{summary, response} {
+		for _, forbidden := range []protoreflect.Name{"value", "secret_value", "password", "token"} {
 			if descriptor.Fields().ByName(forbidden) != nil {
 				t.Fatalf("%s returns forbidden field %q", descriptor.FullName(), forbidden)
 			}
+		}
+	}
+	for _, forbidden := range []protoreflect.Name{"value", "placeholder", "secret_value", "password", "token"} {
+		if summary.Fields().ByName(forbidden) != nil {
+			t.Fatalf("SecretSummary returns forbidden field %q", forbidden)
 		}
 	}
 }

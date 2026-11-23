@@ -4620,8 +4620,8 @@ func (x *SecretServiceSetCustomRequest) GetHosts() []string {
 	return nil
 }
 
-// SecretServiceSetCustomResponse never contains the secret value, the
-// placeholder, or resolver text. Secret is empty while approval is pending.
+// SecretServiceSetCustomResponse never contains the secret value or resolver
+// text. Secret is empty while approval is pending.
 type SecretServiceSetCustomResponse struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	Secret *SecretSummary         `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
@@ -4630,8 +4630,15 @@ type SecretServiceSetCustomResponse struct {
 	// ApprovalID. This mirrors the MCP registration challenge pattern.
 	ApprovalRequired bool   `protobuf:"varint,2,opt,name=approval_required,json=approvalRequired,proto3" json:"approval_required,omitempty"`
 	ApprovalId       string `protobuf:"bytes,3,opt,name=approval_id,json=approvalId,proto3" json:"approval_id,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// Placeholder is the resolved placeholder in full, returned only on this
+	// write path so the CLI can show it (the baseline prints the generated
+	// value; owner decision 2026-11-24). This adds no exposure: the same string
+	// is injected into the sandbox environment for this secret and it is not
+	// authority. Inventories (SecretSummary) keep only PlaceholderMasked;
+	// responses for pending approvals leave this empty.
+	Placeholder   string `protobuf:"bytes,4,opt,name=placeholder,proto3" json:"placeholder,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *SecretServiceSetCustomResponse) Reset() {
@@ -4681,6 +4688,13 @@ func (x *SecretServiceSetCustomResponse) GetApprovalRequired() bool {
 func (x *SecretServiceSetCustomResponse) GetApprovalId() string {
 	if x != nil {
 		return x.ApprovalId
+	}
+	return ""
+}
+
+func (x *SecretServiceSetCustomResponse) GetPlaceholder() string {
+	if x != nil {
+		return x.Placeholder
 	}
 	return ""
 }
@@ -8947,12 +8961,13 @@ const file_sandboxes_local_v1_sandbox_proto_rawDesc = "" +
 	"\x06source\x18\x05 \x01(\v2 .sandboxes.local.v1.SecretSourceR\x06source\x12\x10\n" +
 	"\x03env\x18\x06 \x01(\tR\x03env\x12 \n" +
 	"\vplaceholder\x18\a \x01(\tR\vplaceholder\x12\x14\n" +
-	"\x05hosts\x18\b \x03(\tR\x05hosts\"\xa9\x01\n" +
+	"\x05hosts\x18\b \x03(\tR\x05hosts\"\xcb\x01\n" +
 	"\x1eSecretServiceSetCustomResponse\x129\n" +
 	"\x06secret\x18\x01 \x01(\v2!.sandboxes.local.v1.SecretSummaryR\x06secret\x12+\n" +
 	"\x11approval_required\x18\x02 \x01(\bR\x10approvalRequired\x12\x1f\n" +
 	"\vapproval_id\x18\x03 \x01(\tR\n" +
-	"approvalId\"8\n" +
+	"approvalId\x12 \n" +
+	"\vplaceholder\x18\x04 \x01(\tR\vplaceholder\"8\n" +
 	"\x1aAccountServiceLoginRequest\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\"_\n" +
 	"\x1bAccountServiceLoginResponse\x12\x1a\n" +

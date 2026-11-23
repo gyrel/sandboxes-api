@@ -546,8 +546,8 @@ message SecretServiceSetCustomRequest {
   repeated string hosts = 8;
 }
 
-// SecretServiceSetCustomResponse never contains the secret value, the
-// placeholder, or resolver text. Secret is empty while approval is pending.
+// SecretServiceSetCustomResponse never contains the secret value or resolver
+// text. Secret is empty while approval is pending.
 message SecretServiceSetCustomResponse {
   SecretSummary secret = 1;
   // ApprovalRequired is true when a reference or command source waits for host
@@ -555,6 +555,13 @@ message SecretServiceSetCustomResponse {
   // ApprovalID. This mirrors the MCP registration challenge pattern.
   bool approval_required = 2;
   string approval_id = 3;
+  // Placeholder is the resolved placeholder in full, returned only on this
+  // write path so the CLI can show it (the baseline prints the generated
+  // value; owner decision 2026-11-24). This adds no exposure: the same string
+  // is injected into the sandbox environment for this secret and it is not
+  // authority. Inventories (SecretSummary) keep only PlaceholderMasked;
+  // responses for pending approvals leave this empty.
+  string placeholder = 4;
 }
 
 message AccountServiceLoginRequest {

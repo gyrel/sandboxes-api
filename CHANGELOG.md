@@ -23,8 +23,11 @@
   sources require host approval and return `approval_required` plus an
   `approval_id` until approved. Placeholders are explicit or generated (with
   `{rand}`), injected through `env`, and substituted by the proxy for `hosts`
-  patterns (exact, IP, `*`, `**`). Responses never carry the value, the full
-  placeholder or resolver text.
+  patterns (exact, IP, `*`, `**`). Responses never carry the value or resolver
+  text; the write response echoes the resolved placeholder in full so the CLI
+  can print the generated value (owner decision 2026-11-24; the same string is
+  injected into the guest environment, so this adds no exposure), while
+  inventories keep only the masked form.
 - `SecretSummary.env_name`, `hosts` and `placeholder_masked` expose custom-secret
   placement. The placeholder is masked to at most four trailing characters.
 
