@@ -2,6 +2,42 @@
 
 ## Unreleased
 
+### Added (contract 0.0.36)
+
+- `ApprovalService` (`List`, `Inspect`, `Respond`) exposes host-side pending
+  approvals for `policy approval ls/inspect/respond`. An `Approval` carries a
+  stable ID, kind (host command, MCP registration, MCP call, other), requesting
+  sandbox, action summary, normalized HTTPS destination host and path (no
+  query, userinfo or fragment), header names with static-or-vault class and
+  vault reference IDs, bounded environment variable names, a redacted cwd
+  summary and a creation timestamp. No field carries a header, environment or
+  secret value. `Inspect` and `List` filter by sandbox.
+- `Respond` takes an APPROVE or DENY decision and an optional ONCE or EXACT
+  persist scope. Persisting an EXACT rule requires a trusted OS-backed approval
+  provider. A daemon without one fails closed: it refuses APPROVE and EXACT
+  with `FAILED_PRECONDITION` rather than downgrading them.
+- `SecretService.SetCustom` creates or updates a custom secret that a sandbox
+  uses through a placeholder. Sources are an inline write-only value, a
+  `reference` (`op://` or AWS ARN) or a `command`, reusing `SecretSource` for
+  refresh (on-demand or duration) and `no_verify`. Reference and command
+  sources require host approval and return `approval_required` plus an
+  `approval_id` until approved. Placeholders are explicit or generated (with
+  `{rand}`), injected through `env`, and substituted by the proxy for `hosts`
+  patterns (exact, IP, `*`, `**`). Responses never carry the value or resolver
+  text; the write response echoes the resolved placeholder in full so the CLI
+  can print the generated value (owner decision 2026-11-24; the same string is
+  injected into the guest environment, so this adds no exposure), while
+  inventories keep only the masked form.
+- `SecretSummary.env_name`, `hosts` and `placeholder_masked` expose custom-secret
+  placement. The placeholder is masked to at most four trailing characters.
+
+### Compatibility
+
+- Additive: no existing field, message or RPC was changed or removed. Readers
+  predating 0.0.36 ignore the new RPCs and summary fields.
+- Local-surface only. Cloud `--cloud` flags, `--header` and `--format` for
+  literal header injection are not modeled; Rheic is vault-only.
+
 ### Added (contract 0.0.35)
 
 - `TemplateService.Export` RPC (`TemplateServiceExportRequest{name,

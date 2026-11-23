@@ -1429,10 +1429,11 @@ var RegistryCredentialService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	SecretService_Set_FullMethodName    = "/sandboxes.local.v1.SecretService/Set"
-	SecretService_Create_FullMethodName = "/sandboxes.local.v1.SecretService/Create"
-	SecretService_List_FullMethodName   = "/sandboxes.local.v1.SecretService/List"
-	SecretService_Remove_FullMethodName = "/sandboxes.local.v1.SecretService/Remove"
+	SecretService_Set_FullMethodName       = "/sandboxes.local.v1.SecretService/Set"
+	SecretService_Create_FullMethodName    = "/sandboxes.local.v1.SecretService/Create"
+	SecretService_List_FullMethodName      = "/sandboxes.local.v1.SecretService/List"
+	SecretService_Remove_FullMethodName    = "/sandboxes.local.v1.SecretService/Remove"
+	SecretService_SetCustom_FullMethodName = "/sandboxes.local.v1.SecretService/SetCustom"
 )
 
 // SecretServiceClient is the client API for SecretService service.
@@ -1443,6 +1444,7 @@ type SecretServiceClient interface {
 	Create(ctx context.Context, in *SecretServiceCreateRequest, opts ...grpc.CallOption) (*SecretServiceCreateResponse, error)
 	List(ctx context.Context, in *SecretServiceListRequest, opts ...grpc.CallOption) (*SecretServiceListResponse, error)
 	Remove(ctx context.Context, in *SecretServiceRemoveRequest, opts ...grpc.CallOption) (*SecretServiceRemoveResponse, error)
+	SetCustom(ctx context.Context, in *SecretServiceSetCustomRequest, opts ...grpc.CallOption) (*SecretServiceSetCustomResponse, error)
 }
 
 type secretServiceClient struct {
@@ -1493,6 +1495,16 @@ func (c *secretServiceClient) Remove(ctx context.Context, in *SecretServiceRemov
 	return out, nil
 }
 
+func (c *secretServiceClient) SetCustom(ctx context.Context, in *SecretServiceSetCustomRequest, opts ...grpc.CallOption) (*SecretServiceSetCustomResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SecretServiceSetCustomResponse)
+	err := c.cc.Invoke(ctx, SecretService_SetCustom_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SecretServiceServer is the server API for SecretService service.
 // All implementations must embed UnimplementedSecretServiceServer
 // for forward compatibility.
@@ -1501,6 +1513,7 @@ type SecretServiceServer interface {
 	Create(context.Context, *SecretServiceCreateRequest) (*SecretServiceCreateResponse, error)
 	List(context.Context, *SecretServiceListRequest) (*SecretServiceListResponse, error)
 	Remove(context.Context, *SecretServiceRemoveRequest) (*SecretServiceRemoveResponse, error)
+	SetCustom(context.Context, *SecretServiceSetCustomRequest) (*SecretServiceSetCustomResponse, error)
 	mustEmbedUnimplementedSecretServiceServer()
 }
 
@@ -1522,6 +1535,9 @@ func (UnimplementedSecretServiceServer) List(context.Context, *SecretServiceList
 }
 func (UnimplementedSecretServiceServer) Remove(context.Context, *SecretServiceRemoveRequest) (*SecretServiceRemoveResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Remove not implemented")
+}
+func (UnimplementedSecretServiceServer) SetCustom(context.Context, *SecretServiceSetCustomRequest) (*SecretServiceSetCustomResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetCustom not implemented")
 }
 func (UnimplementedSecretServiceServer) mustEmbedUnimplementedSecretServiceServer() {}
 func (UnimplementedSecretServiceServer) testEmbeddedByValue()                       {}
@@ -1616,6 +1632,24 @@ func _SecretService_Remove_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SecretService_SetCustom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SecretServiceSetCustomRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecretServiceServer).SetCustom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SecretService_SetCustom_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecretServiceServer).SetCustom(ctx, req.(*SecretServiceSetCustomRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SecretService_ServiceDesc is the grpc.ServiceDesc for SecretService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1638,6 +1672,10 @@ var SecretService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Remove",
 			Handler:    _SecretService_Remove_Handler,
+		},
+		{
+			MethodName: "SetCustom",
+			Handler:    _SecretService_SetCustom_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -2179,6 +2217,192 @@ var TemplateService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Export",
 			Handler:    _TemplateService_Export_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "sandboxes/local/v1/sandbox.proto",
+}
+
+const (
+	ApprovalService_List_FullMethodName    = "/sandboxes.local.v1.ApprovalService/List"
+	ApprovalService_Inspect_FullMethodName = "/sandboxes.local.v1.ApprovalService/Inspect"
+	ApprovalService_Respond_FullMethodName = "/sandboxes.local.v1.ApprovalService/Respond"
+)
+
+// ApprovalServiceClient is the client API for ApprovalService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// ApprovalService lists, inspects and resolves host-side approvals. A pending
+// approval is only consent-gathering state. Listing or inspecting one never
+// grants it.
+type ApprovalServiceClient interface {
+	List(ctx context.Context, in *ApprovalServiceListRequest, opts ...grpc.CallOption) (*ApprovalServiceListResponse, error)
+	Inspect(ctx context.Context, in *ApprovalServiceInspectRequest, opts ...grpc.CallOption) (*ApprovalServiceInspectResponse, error)
+	Respond(ctx context.Context, in *ApprovalServiceRespondRequest, opts ...grpc.CallOption) (*ApprovalServiceRespondResponse, error)
+}
+
+type approvalServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewApprovalServiceClient(cc grpc.ClientConnInterface) ApprovalServiceClient {
+	return &approvalServiceClient{cc}
+}
+
+func (c *approvalServiceClient) List(ctx context.Context, in *ApprovalServiceListRequest, opts ...grpc.CallOption) (*ApprovalServiceListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ApprovalServiceListResponse)
+	err := c.cc.Invoke(ctx, ApprovalService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *approvalServiceClient) Inspect(ctx context.Context, in *ApprovalServiceInspectRequest, opts ...grpc.CallOption) (*ApprovalServiceInspectResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ApprovalServiceInspectResponse)
+	err := c.cc.Invoke(ctx, ApprovalService_Inspect_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *approvalServiceClient) Respond(ctx context.Context, in *ApprovalServiceRespondRequest, opts ...grpc.CallOption) (*ApprovalServiceRespondResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ApprovalServiceRespondResponse)
+	err := c.cc.Invoke(ctx, ApprovalService_Respond_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ApprovalServiceServer is the server API for ApprovalService service.
+// All implementations must embed UnimplementedApprovalServiceServer
+// for forward compatibility.
+//
+// ApprovalService lists, inspects and resolves host-side approvals. A pending
+// approval is only consent-gathering state. Listing or inspecting one never
+// grants it.
+type ApprovalServiceServer interface {
+	List(context.Context, *ApprovalServiceListRequest) (*ApprovalServiceListResponse, error)
+	Inspect(context.Context, *ApprovalServiceInspectRequest) (*ApprovalServiceInspectResponse, error)
+	Respond(context.Context, *ApprovalServiceRespondRequest) (*ApprovalServiceRespondResponse, error)
+	mustEmbedUnimplementedApprovalServiceServer()
+}
+
+// UnimplementedApprovalServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedApprovalServiceServer struct{}
+
+func (UnimplementedApprovalServiceServer) List(context.Context, *ApprovalServiceListRequest) (*ApprovalServiceListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedApprovalServiceServer) Inspect(context.Context, *ApprovalServiceInspectRequest) (*ApprovalServiceInspectResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Inspect not implemented")
+}
+func (UnimplementedApprovalServiceServer) Respond(context.Context, *ApprovalServiceRespondRequest) (*ApprovalServiceRespondResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Respond not implemented")
+}
+func (UnimplementedApprovalServiceServer) mustEmbedUnimplementedApprovalServiceServer() {}
+func (UnimplementedApprovalServiceServer) testEmbeddedByValue()                         {}
+
+// UnsafeApprovalServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ApprovalServiceServer will
+// result in compilation errors.
+type UnsafeApprovalServiceServer interface {
+	mustEmbedUnimplementedApprovalServiceServer()
+}
+
+func RegisterApprovalServiceServer(s grpc.ServiceRegistrar, srv ApprovalServiceServer) {
+	// If the following call panics, it indicates UnimplementedApprovalServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ApprovalService_ServiceDesc, srv)
+}
+
+func _ApprovalService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApprovalServiceListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApprovalServiceServer).List(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApprovalService_List_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApprovalServiceServer).List(ctx, req.(*ApprovalServiceListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApprovalService_Inspect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApprovalServiceInspectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApprovalServiceServer).Inspect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApprovalService_Inspect_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApprovalServiceServer).Inspect(ctx, req.(*ApprovalServiceInspectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApprovalService_Respond_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApprovalServiceRespondRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApprovalServiceServer).Respond(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApprovalService_Respond_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApprovalServiceServer).Respond(ctx, req.(*ApprovalServiceRespondRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ApprovalService_ServiceDesc is the grpc.ServiceDesc for ApprovalService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ApprovalService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "sandboxes.local.v1.ApprovalService",
+	HandlerType: (*ApprovalServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "List",
+			Handler:    _ApprovalService_List_Handler,
+		},
+		{
+			MethodName: "Inspect",
+			Handler:    _ApprovalService_Inspect_Handler,
+		},
+		{
+			MethodName: "Respond",
+			Handler:    _ApprovalService_Respond_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
