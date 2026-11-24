@@ -823,6 +823,47 @@ message MCPRegisterServerRequest {
   // literal formatting text and ${placeholder} references; secret material
   // itself must never cross this RPC or be persisted in registry state.
   map<string, string> secret_headers = 7;
+  // RFC 8414 authorization-server metadata: a path or http(s) URL to an
+  // oauth-authorization-server document (captured add grammar
+  // --oauth-authorization-server). Applies to url transports only.
+  string oauth_authorization_server = 8;
+  // Pre-registered OAuth client id (captured --client-id). A confidential
+  // client's secret comes from the host vault
+  // (secret set mcp:<server>:client_secret), never from this RPC.
+  string client_id = 9;
+  // RFC 8707 resource indicator (absolute URI, scheme+host, no fragment;
+  // captured --resource) overriding the server-published value.
+  string resource = 10;
+  // Default OAuth scopes requested at consent time (captured --scope,
+  // repeatable). Mutually exclusive with no_scope.
+  repeated string scopes = 11;
+  // Suppress all scope fallbacks so the authorization server applies its own
+  // default grant (captured --no-scope). Cannot be combined with scopes.
+  bool no_scope = 12;
+  // Register an OAuth server without starting the hosted flow (captured
+  // --skip-auth).
+  bool skip_auth = 13;
+  // Local port for the add-time OAuth callback listener (captured
+  // --callback-port; 0 means OS-assigned). Applies to url transports.
+  int32 callback_port = 14;
+  // Disable HTTP/2 negotiation for this remote server, leaving HTTP/1.1
+  // (captured --disable-http2). Applies to url transports.
+  bool disable_http2 = 15;
+  // deferred (security): captured --local runs the registry OCI server via
+  // `docker run`; host Docker invocation conflicts with AGENTS §8 (no host
+  // Docker socket, fail-closed network). Modeled only after a dedicated
+  // security design; daemons must reject clients that request it (no field
+  // exists to request it).
+  // deferred (security): captured --skip-ssrf-check disables SSRF checks for
+  // the registration including OAuth metadata and redirects. Rheic enforces
+  // network fail-closed with no permissive fallback; the flag is NOT modeled
+  // and the divergence is recorded as a release blocker candidate in PLAN §6.
+  // deferred (design): the captured --url field accepts three forms (manifest
+  // URL, remote endpoint URL, dhi.io image ref) in one string. This contract's
+  // url = 5 documents remote endpoint semantics; manifest and dhi ref forms
+  // are deferred until the daemon resolver distinguishes them (the field can
+  // carry them; classification rules will be added daemon-side without a
+  // schema change).
 }
 
 message MCPRegisterServerResponse {
@@ -884,6 +925,98 @@ message ListMCPServersResponse {
   repeated MCPServerSummary servers = 1;
 }
 
+// deferred: Registry and manifest URL interpretation and static MCP configuration
+// require a separate registration contract; existing url denotes a remote endpoint.
+// deferred: OAuth discovery, dynamic registration and scope overrides require
+// daemon-side policy and are not represented by this challenge contract.
+enum MCPAuthStatus {
+  MCP_AUTH_STATUS_UNSPECIFIED = 0;
+  MCP_AUTH_STATUS_NOT_CONFIGURED = 1;
+  MCP_AUTH_STATUS_READY = 2;
+  MCP_AUTH_STATUS_PENDING_APPROVAL = 3;
+  MCP_AUTH_STATUS_EXPIRED = 4;
+  MCP_AUTH_STATUS_ERROR = 5;
+}
+
+enum MCPGatewayState {
+  MCP_GATEWAY_STATE_UNSPECIFIED = 0;
+  MCP_GATEWAY_STATE_UNLOADED = 1;
+  MCP_GATEWAY_STATE_LOADED = 2;
+}
+
+message MCPLoadServerRequest {
+  string name = 1;
+  string sandbox_id = 2;
+}
+message MCPLoadServerResponse { bool loaded = 1; }
+// Unload detaches the server from the sandbox gateway and prevents restoration
+// on restart. The registry entry, vault references and approvals survive.
+// Remove deletes the registration instead.
+message MCPUnloadServerRequest {
+  string name = 1;
+  string sandbox_id = 2;
+}
+message MCPUnloadServerResponse { bool unloaded = 1; }
+message InspectMCPServerRequest {
+  string name = 1;
+  // Empty selects global registry scope; otherwise inspect this sandbox.
+  string sandbox_id = 2;
+}
+// Identity is non-secret subject display only: display name, kind and issuer
+// host. Never return credentials, tokens, headers or arbitrary identity claims.
+message MCPServerDetail {
+  string name = 1;
+  string sandbox_id = 2;
+  string identity_display_name = 3;
+  string identity_kind = 4;
+  string identity_issuer_host = 5;
+  uint32 tools_count = 6;
+  int64 last_sync_at_unix = 7;
+  MCPAuthStatus auth_status = 8;
+  MCPGatewayState gateway_state = 9;
+}
+message InspectMCPServerResponse { MCPServerDetail server = 1; }
+message GetMCPAuthStatusRequest {
+  string name = 1;
+  // Apply to all registered OAuth servers (captured auth status --all).
+  bool all = 2;
+}
+// Status is read-only and never starts or refreshes authorization.
+// MCPServerAuthStatus pairs one server name with its auth state for bulk
+// reporting. It carries no token material.
+message MCPServerAuthStatus {
+  string name = 1;
+  MCPAuthStatus status = 2;
+}
+
+message GetMCPAuthStatusResponse {
+  // Populated for single-name requests.
+  MCPAuthStatus status = 1;
+  // Populated for all=true requests (one entry per registered OAuth server).
+  repeated MCPServerAuthStatus entries = 2;
+}
+message RemoveMCPAuthRequest { string name = 1; }
+// The daemon clears stored auth and invalidates live routes while retaining
+// the registration. No credential material is returned.
+message RemoveMCPAuthResponse { bool removed = 1; }
+message StartMCPAuthRequest {
+  string name = 1;
+  string sandbox_id = 2;
+  // Per-run scope overrides (captured mcp auth --scope/--no-scope); mutually
+  // exclusive. Scope precedence rules are daemon-side and documented in the
+  // captured help; the contract only transports the request.
+  repeated string scopes = 3;
+  bool no_scope = 4;
+  // Apply to all registered OAuth servers (captured mcp auth --all).
+  bool all = 5;
+}
+// The daemon owns discovery, registration and browser flow. ApprovalID selects
+// a challenge, not proof of consent; poll GetMCPAuthStatus for completion.
+message StartMCPAuthResponse {
+  bool approval_required = 1;
+  string approval_id = 2;
+}
+
 message GetVersionRequest {}
 
 message GetVersionResponse {
@@ -914,6 +1047,12 @@ service SandboxService {
   rpc MCPRegisterServer(MCPRegisterServerRequest) returns (MCPRegisterServerResponse);
   rpc MCPApproveRegistration(MCPApproveRegistrationRequest) returns (MCPApproveRegistrationResponse);
   rpc MCPRemoveServer(MCPRemoveServerRequest) returns (MCPRemoveServerResponse);
+  rpc MCPLoadServer(MCPLoadServerRequest) returns (MCPLoadServerResponse);
+  rpc MCPUnloadServer(MCPUnloadServerRequest) returns (MCPUnloadServerResponse);
+  rpc InspectMCPServer(InspectMCPServerRequest) returns (InspectMCPServerResponse);
+  rpc GetMCPAuthStatus(GetMCPAuthStatusRequest) returns (GetMCPAuthStatusResponse);
+  rpc RemoveMCPAuth(RemoveMCPAuthRequest) returns (RemoveMCPAuthResponse);
+  rpc StartMCPAuth(StartMCPAuthRequest) returns (StartMCPAuthResponse);
   rpc MCPCall(MCPCallRequest) returns (MCPCallResponse);
   rpc MCPApproveCall(MCPApproveCallRequest) returns (MCPApproveCallResponse);
   rpc RefreshPolicies(RefreshPoliciesRequest) returns (RefreshPoliciesResponse);
