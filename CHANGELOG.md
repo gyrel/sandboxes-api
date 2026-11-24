@@ -2,6 +2,27 @@
 
 ## Unreleased
 
+### Added (contract 0.0.37)
+
+- `KitPolicyService` (`CheckKit`, `GetKitPolicyConfig`) exposes the daemon's kit
+  source policy for display and fail-closed checks. `CheckKit` takes
+  `source_kind` (directory, zip, git, oci), `source_ref` (a URL/path identifier
+  only), an optional `sandbox_id`, and `signature_present`; it returns `allowed`,
+  a stable `reason` (`OK`, `SOURCE_NOT_ALLOWED`, `LOCAL_DISABLED`,
+  `SIGNATURE_REQUIRED`, `POLICY_UNAVAILABLE`, `INVALID_REFERENCE`), a
+  human-readable `message`, and `checked_settings` (setting names only). A daemon
+  without a policy engine returns `POLICY_UNAVAILABLE` with `allowed=false`;
+  org/managed deny is sticky; unknown enum values are `INVALID_ARGUMENT`. No
+  field carries secret material.
+- `GetKitPolicyConfig` returns the effective `allowed_sources`,
+  `allow_local_kits`, `require_signature` and the read-only `managed` flag (org
+  policy override). Local settings may only tighten a managed policy.
+
+### Compatibility
+
+- Additive: no existing field, message, service or RPC was changed or removed.
+  Readers predating 0.0.37 ignore the new service.
+
 ### Added (contract 0.0.36)
 
 - `ApprovalService` (`List`, `Inspect`, `Respond`) exposes host-side pending
