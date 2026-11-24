@@ -2408,3 +2408,151 @@ var ApprovalService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "sandboxes/local/v1/sandbox.proto",
 }
+
+const (
+	KitPolicyService_CheckKit_FullMethodName           = "/sandboxes.local.v1.KitPolicyService/CheckKit"
+	KitPolicyService_GetKitPolicyConfig_FullMethodName = "/sandboxes.local.v1.KitPolicyService/GetKitPolicyConfig"
+)
+
+// KitPolicyServiceClient is the client API for KitPolicyService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// KitPolicyService exposes the daemon's kit source policy for display and
+// fail-closed checks. A daemon without a policy engine returns
+// CHECK_KIT_REASON_POLICY_UNAVAILABLE with allowed=false from CheckKit.
+type KitPolicyServiceClient interface {
+	CheckKit(ctx context.Context, in *CheckKitRequest, opts ...grpc.CallOption) (*CheckKitResponse, error)
+	GetKitPolicyConfig(ctx context.Context, in *GetKitPolicyConfigRequest, opts ...grpc.CallOption) (*GetKitPolicyConfigResponse, error)
+}
+
+type kitPolicyServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewKitPolicyServiceClient(cc grpc.ClientConnInterface) KitPolicyServiceClient {
+	return &kitPolicyServiceClient{cc}
+}
+
+func (c *kitPolicyServiceClient) CheckKit(ctx context.Context, in *CheckKitRequest, opts ...grpc.CallOption) (*CheckKitResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckKitResponse)
+	err := c.cc.Invoke(ctx, KitPolicyService_CheckKit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *kitPolicyServiceClient) GetKitPolicyConfig(ctx context.Context, in *GetKitPolicyConfigRequest, opts ...grpc.CallOption) (*GetKitPolicyConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetKitPolicyConfigResponse)
+	err := c.cc.Invoke(ctx, KitPolicyService_GetKitPolicyConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// KitPolicyServiceServer is the server API for KitPolicyService service.
+// All implementations must embed UnimplementedKitPolicyServiceServer
+// for forward compatibility.
+//
+// KitPolicyService exposes the daemon's kit source policy for display and
+// fail-closed checks. A daemon without a policy engine returns
+// CHECK_KIT_REASON_POLICY_UNAVAILABLE with allowed=false from CheckKit.
+type KitPolicyServiceServer interface {
+	CheckKit(context.Context, *CheckKitRequest) (*CheckKitResponse, error)
+	GetKitPolicyConfig(context.Context, *GetKitPolicyConfigRequest) (*GetKitPolicyConfigResponse, error)
+	mustEmbedUnimplementedKitPolicyServiceServer()
+}
+
+// UnimplementedKitPolicyServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedKitPolicyServiceServer struct{}
+
+func (UnimplementedKitPolicyServiceServer) CheckKit(context.Context, *CheckKitRequest) (*CheckKitResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckKit not implemented")
+}
+func (UnimplementedKitPolicyServiceServer) GetKitPolicyConfig(context.Context, *GetKitPolicyConfigRequest) (*GetKitPolicyConfigResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetKitPolicyConfig not implemented")
+}
+func (UnimplementedKitPolicyServiceServer) mustEmbedUnimplementedKitPolicyServiceServer() {}
+func (UnimplementedKitPolicyServiceServer) testEmbeddedByValue()                          {}
+
+// UnsafeKitPolicyServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to KitPolicyServiceServer will
+// result in compilation errors.
+type UnsafeKitPolicyServiceServer interface {
+	mustEmbedUnimplementedKitPolicyServiceServer()
+}
+
+func RegisterKitPolicyServiceServer(s grpc.ServiceRegistrar, srv KitPolicyServiceServer) {
+	// If the following call panics, it indicates UnimplementedKitPolicyServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&KitPolicyService_ServiceDesc, srv)
+}
+
+func _KitPolicyService_CheckKit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckKitRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KitPolicyServiceServer).CheckKit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: KitPolicyService_CheckKit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KitPolicyServiceServer).CheckKit(ctx, req.(*CheckKitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KitPolicyService_GetKitPolicyConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetKitPolicyConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KitPolicyServiceServer).GetKitPolicyConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: KitPolicyService_GetKitPolicyConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KitPolicyServiceServer).GetKitPolicyConfig(ctx, req.(*GetKitPolicyConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// KitPolicyService_ServiceDesc is the grpc.ServiceDesc for KitPolicyService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var KitPolicyService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "sandboxes.local.v1.KitPolicyService",
+	HandlerType: (*KitPolicyServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CheckKit",
+			Handler:    _KitPolicyService_CheckKit_Handler,
+		},
+		{
+			MethodName: "GetKitPolicyConfig",
+			Handler:    _KitPolicyService_GetKitPolicyConfig_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "sandboxes/local/v1/sandbox.proto",
+}

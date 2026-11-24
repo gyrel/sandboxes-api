@@ -1194,3 +1194,75 @@ message ApprovalServiceRespondResponse {
   // PersistedRuleID is set only when an EXACT rule was stored.
   string persisted_rule_id = 2;
 }
+
+// KitSourceKind identifies the kind of a kit source reference. Unknown values
+// must be rejected by daemons with INVALID_ARGUMENT (fail closed).
+enum KitSourceKind {
+  KIT_SOURCE_KIND_UNSPECIFIED = 0;
+  KIT_SOURCE_KIND_DIRECTORY = 1;
+  KIT_SOURCE_KIND_ZIP = 2;
+  KIT_SOURCE_KIND_GIT = 3;
+  KIT_SOURCE_KIND_OCI = 4;
+}
+
+// CheckKitReason is the stable outcome of a kit policy check. Daemons without a
+// policy engine return CHECK_KIT_REASON_POLICY_UNAVAILABLE with allowed=false
+// (fail closed). Org/managed deny is sticky: a managed deny is never relaxed by
+// local settings.
+enum CheckKitReason {
+  CHECK_KIT_REASON_UNSPECIFIED = 0;
+  CHECK_KIT_REASON_OK = 1;
+  CHECK_KIT_REASON_SOURCE_NOT_ALLOWED = 2;
+  CHECK_KIT_REASON_LOCAL_DISABLED = 3;
+  CHECK_KIT_REASON_SIGNATURE_REQUIRED = 4;
+  CHECK_KIT_REASON_POLICY_UNAVAILABLE = 5;
+  CHECK_KIT_REASON_INVALID_REFERENCE = 6;
+}
+
+// CheckKitRequest asks the daemon whether a kit source may be installed or used.
+// source_ref is a URL/path identifier ONLY: it must never carry content or
+// credentials. Daemons reject references containing userinfo or a query string
+// with CHECK_KIT_REASON_INVALID_REFERENCE. sandbox_id is optional and, when
+// present, scopes the decision to that sandbox.
+message CheckKitRequest {
+  KitSourceKind source_kind = 1;
+  // URL/path identifier ONLY. Never content, never credentials; userinfo/query
+  // components are rejected daemon-side.
+  string source_ref = 2;
+  string sandbox_id = 3;
+  bool signature_present = 4;
+}
+
+// CheckKitResponse is the daemon's fail-closed decision. allowed is false unless
+// the policy explicitly permits the source. message is human-readable and must
+// never contain secret material. checked_settings lists the setting names that
+// decided the outcome (names only).
+message CheckKitResponse {
+  bool allowed = 1;
+  CheckKitReason reason = 2;
+  // Human-readable explanation. Redaction contract: no secret material, no
+  // credentials, no source content.
+  string message = 3;
+  repeated string checked_settings = 4;
+}
+
+message GetKitPolicyConfigRequest {}
+
+// GetKitPolicyConfigResponse exposes the effective kit policy for display. It is
+// read-only. managed reports whether an organization policy overrides local
+// settings; local settings may only TIGHTEN a managed policy (AGENTS.md §8),
+// never relax it. No field carries secret material.
+message GetKitPolicyConfigResponse {
+  repeated KitSourceKind allowed_sources = 1;
+  bool allow_local_kits = 2;
+  bool require_signature = 3;
+  bool managed = 4;
+}
+
+// KitPolicyService exposes the daemon's kit source policy for display and
+// fail-closed checks. A daemon without a policy engine returns
+// CHECK_KIT_REASON_POLICY_UNAVAILABLE with allowed=false from CheckKit.
+service KitPolicyService {
+  rpc CheckKit(CheckKitRequest) returns (CheckKitResponse);
+  rpc GetKitPolicyConfig(GetKitPolicyConfigRequest) returns (GetKitPolicyConfigResponse);
+}
