@@ -41,6 +41,12 @@ const (
 	SandboxService_MCPRegisterServer_FullMethodName      = "/sandboxes.local.v1.SandboxService/MCPRegisterServer"
 	SandboxService_MCPApproveRegistration_FullMethodName = "/sandboxes.local.v1.SandboxService/MCPApproveRegistration"
 	SandboxService_MCPRemoveServer_FullMethodName        = "/sandboxes.local.v1.SandboxService/MCPRemoveServer"
+	SandboxService_MCPLoadServer_FullMethodName          = "/sandboxes.local.v1.SandboxService/MCPLoadServer"
+	SandboxService_MCPUnloadServer_FullMethodName        = "/sandboxes.local.v1.SandboxService/MCPUnloadServer"
+	SandboxService_InspectMCPServer_FullMethodName       = "/sandboxes.local.v1.SandboxService/InspectMCPServer"
+	SandboxService_GetMCPAuthStatus_FullMethodName       = "/sandboxes.local.v1.SandboxService/GetMCPAuthStatus"
+	SandboxService_RemoveMCPAuth_FullMethodName          = "/sandboxes.local.v1.SandboxService/RemoveMCPAuth"
+	SandboxService_StartMCPAuth_FullMethodName           = "/sandboxes.local.v1.SandboxService/StartMCPAuth"
 	SandboxService_MCPCall_FullMethodName                = "/sandboxes.local.v1.SandboxService/MCPCall"
 	SandboxService_MCPApproveCall_FullMethodName         = "/sandboxes.local.v1.SandboxService/MCPApproveCall"
 	SandboxService_RefreshPolicies_FullMethodName        = "/sandboxes.local.v1.SandboxService/RefreshPolicies"
@@ -74,6 +80,12 @@ type SandboxServiceClient interface {
 	MCPRegisterServer(ctx context.Context, in *MCPRegisterServerRequest, opts ...grpc.CallOption) (*MCPRegisterServerResponse, error)
 	MCPApproveRegistration(ctx context.Context, in *MCPApproveRegistrationRequest, opts ...grpc.CallOption) (*MCPApproveRegistrationResponse, error)
 	MCPRemoveServer(ctx context.Context, in *MCPRemoveServerRequest, opts ...grpc.CallOption) (*MCPRemoveServerResponse, error)
+	MCPLoadServer(ctx context.Context, in *MCPLoadServerRequest, opts ...grpc.CallOption) (*MCPLoadServerResponse, error)
+	MCPUnloadServer(ctx context.Context, in *MCPUnloadServerRequest, opts ...grpc.CallOption) (*MCPUnloadServerResponse, error)
+	InspectMCPServer(ctx context.Context, in *InspectMCPServerRequest, opts ...grpc.CallOption) (*InspectMCPServerResponse, error)
+	GetMCPAuthStatus(ctx context.Context, in *GetMCPAuthStatusRequest, opts ...grpc.CallOption) (*GetMCPAuthStatusResponse, error)
+	RemoveMCPAuth(ctx context.Context, in *RemoveMCPAuthRequest, opts ...grpc.CallOption) (*RemoveMCPAuthResponse, error)
+	StartMCPAuth(ctx context.Context, in *StartMCPAuthRequest, opts ...grpc.CallOption) (*StartMCPAuthResponse, error)
 	MCPCall(ctx context.Context, in *MCPCallRequest, opts ...grpc.CallOption) (*MCPCallResponse, error)
 	MCPApproveCall(ctx context.Context, in *MCPApproveCallRequest, opts ...grpc.CallOption) (*MCPApproveCallResponse, error)
 	RefreshPolicies(ctx context.Context, in *RefreshPoliciesRequest, opts ...grpc.CallOption) (*RefreshPoliciesResponse, error)
@@ -330,6 +342,66 @@ func (c *sandboxServiceClient) MCPRemoveServer(ctx context.Context, in *MCPRemov
 	return out, nil
 }
 
+func (c *sandboxServiceClient) MCPLoadServer(ctx context.Context, in *MCPLoadServerRequest, opts ...grpc.CallOption) (*MCPLoadServerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MCPLoadServerResponse)
+	err := c.cc.Invoke(ctx, SandboxService_MCPLoadServer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sandboxServiceClient) MCPUnloadServer(ctx context.Context, in *MCPUnloadServerRequest, opts ...grpc.CallOption) (*MCPUnloadServerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MCPUnloadServerResponse)
+	err := c.cc.Invoke(ctx, SandboxService_MCPUnloadServer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sandboxServiceClient) InspectMCPServer(ctx context.Context, in *InspectMCPServerRequest, opts ...grpc.CallOption) (*InspectMCPServerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(InspectMCPServerResponse)
+	err := c.cc.Invoke(ctx, SandboxService_InspectMCPServer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sandboxServiceClient) GetMCPAuthStatus(ctx context.Context, in *GetMCPAuthStatusRequest, opts ...grpc.CallOption) (*GetMCPAuthStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMCPAuthStatusResponse)
+	err := c.cc.Invoke(ctx, SandboxService_GetMCPAuthStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sandboxServiceClient) RemoveMCPAuth(ctx context.Context, in *RemoveMCPAuthRequest, opts ...grpc.CallOption) (*RemoveMCPAuthResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RemoveMCPAuthResponse)
+	err := c.cc.Invoke(ctx, SandboxService_RemoveMCPAuth_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sandboxServiceClient) StartMCPAuth(ctx context.Context, in *StartMCPAuthRequest, opts ...grpc.CallOption) (*StartMCPAuthResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StartMCPAuthResponse)
+	err := c.cc.Invoke(ctx, SandboxService_StartMCPAuth_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sandboxServiceClient) MCPCall(ctx context.Context, in *MCPCallRequest, opts ...grpc.CallOption) (*MCPCallResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MCPCallResponse)
@@ -406,6 +478,12 @@ type SandboxServiceServer interface {
 	MCPRegisterServer(context.Context, *MCPRegisterServerRequest) (*MCPRegisterServerResponse, error)
 	MCPApproveRegistration(context.Context, *MCPApproveRegistrationRequest) (*MCPApproveRegistrationResponse, error)
 	MCPRemoveServer(context.Context, *MCPRemoveServerRequest) (*MCPRemoveServerResponse, error)
+	MCPLoadServer(context.Context, *MCPLoadServerRequest) (*MCPLoadServerResponse, error)
+	MCPUnloadServer(context.Context, *MCPUnloadServerRequest) (*MCPUnloadServerResponse, error)
+	InspectMCPServer(context.Context, *InspectMCPServerRequest) (*InspectMCPServerResponse, error)
+	GetMCPAuthStatus(context.Context, *GetMCPAuthStatusRequest) (*GetMCPAuthStatusResponse, error)
+	RemoveMCPAuth(context.Context, *RemoveMCPAuthRequest) (*RemoveMCPAuthResponse, error)
+	StartMCPAuth(context.Context, *StartMCPAuthRequest) (*StartMCPAuthResponse, error)
 	MCPCall(context.Context, *MCPCallRequest) (*MCPCallResponse, error)
 	MCPApproveCall(context.Context, *MCPApproveCallRequest) (*MCPApproveCallResponse, error)
 	RefreshPolicies(context.Context, *RefreshPoliciesRequest) (*RefreshPoliciesResponse, error)
@@ -486,6 +564,24 @@ func (UnimplementedSandboxServiceServer) MCPApproveRegistration(context.Context,
 }
 func (UnimplementedSandboxServiceServer) MCPRemoveServer(context.Context, *MCPRemoveServerRequest) (*MCPRemoveServerResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method MCPRemoveServer not implemented")
+}
+func (UnimplementedSandboxServiceServer) MCPLoadServer(context.Context, *MCPLoadServerRequest) (*MCPLoadServerResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MCPLoadServer not implemented")
+}
+func (UnimplementedSandboxServiceServer) MCPUnloadServer(context.Context, *MCPUnloadServerRequest) (*MCPUnloadServerResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MCPUnloadServer not implemented")
+}
+func (UnimplementedSandboxServiceServer) InspectMCPServer(context.Context, *InspectMCPServerRequest) (*InspectMCPServerResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method InspectMCPServer not implemented")
+}
+func (UnimplementedSandboxServiceServer) GetMCPAuthStatus(context.Context, *GetMCPAuthStatusRequest) (*GetMCPAuthStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMCPAuthStatus not implemented")
+}
+func (UnimplementedSandboxServiceServer) RemoveMCPAuth(context.Context, *RemoveMCPAuthRequest) (*RemoveMCPAuthResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RemoveMCPAuth not implemented")
+}
+func (UnimplementedSandboxServiceServer) StartMCPAuth(context.Context, *StartMCPAuthRequest) (*StartMCPAuthResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method StartMCPAuth not implemented")
 }
 func (UnimplementedSandboxServiceServer) MCPCall(context.Context, *MCPCallRequest) (*MCPCallResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method MCPCall not implemented")
@@ -894,6 +990,114 @@ func _SandboxService_MCPRemoveServer_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SandboxService_MCPLoadServer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MCPLoadServerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SandboxServiceServer).MCPLoadServer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SandboxService_MCPLoadServer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SandboxServiceServer).MCPLoadServer(ctx, req.(*MCPLoadServerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SandboxService_MCPUnloadServer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MCPUnloadServerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SandboxServiceServer).MCPUnloadServer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SandboxService_MCPUnloadServer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SandboxServiceServer).MCPUnloadServer(ctx, req.(*MCPUnloadServerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SandboxService_InspectMCPServer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InspectMCPServerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SandboxServiceServer).InspectMCPServer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SandboxService_InspectMCPServer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SandboxServiceServer).InspectMCPServer(ctx, req.(*InspectMCPServerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SandboxService_GetMCPAuthStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMCPAuthStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SandboxServiceServer).GetMCPAuthStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SandboxService_GetMCPAuthStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SandboxServiceServer).GetMCPAuthStatus(ctx, req.(*GetMCPAuthStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SandboxService_RemoveMCPAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveMCPAuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SandboxServiceServer).RemoveMCPAuth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SandboxService_RemoveMCPAuth_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SandboxServiceServer).RemoveMCPAuth(ctx, req.(*RemoveMCPAuthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SandboxService_StartMCPAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartMCPAuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SandboxServiceServer).StartMCPAuth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SandboxService_StartMCPAuth_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SandboxServiceServer).StartMCPAuth(ctx, req.(*StartMCPAuthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SandboxService_MCPCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MCPCallRequest)
 	if err := dec(in); err != nil {
@@ -1066,6 +1270,30 @@ var SandboxService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MCPRemoveServer",
 			Handler:    _SandboxService_MCPRemoveServer_Handler,
+		},
+		{
+			MethodName: "MCPLoadServer",
+			Handler:    _SandboxService_MCPLoadServer_Handler,
+		},
+		{
+			MethodName: "MCPUnloadServer",
+			Handler:    _SandboxService_MCPUnloadServer_Handler,
+		},
+		{
+			MethodName: "InspectMCPServer",
+			Handler:    _SandboxService_InspectMCPServer_Handler,
+		},
+		{
+			MethodName: "GetMCPAuthStatus",
+			Handler:    _SandboxService_GetMCPAuthStatus_Handler,
+		},
+		{
+			MethodName: "RemoveMCPAuth",
+			Handler:    _SandboxService_RemoveMCPAuth_Handler,
+		},
+		{
+			MethodName: "StartMCPAuth",
+			Handler:    _SandboxService_StartMCPAuth_Handler,
 		},
 		{
 			MethodName: "MCPCall",

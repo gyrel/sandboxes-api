@@ -1,5 +1,9 @@
 # Changelog
 
+### Added (contract 0.0.38)
+
+- Add MCP gateway lifecycle, inspection and credential management contracts.
+
 ## Unreleased
 
 ### Added (contract 0.0.37)
