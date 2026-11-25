@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package sandboxes.local.v1;
 
-option go_package = "github.com/rheic/sandboxes-api/gen/go/sandboxes/local/v1;localv1";
+option go_package = "github.com/gyrel/sandboxes-api/gen/go/sandboxes/local/v1;localv1";
 
 enum SandboxState {
   SANDBOX_STATE_UNSPECIFIED = 0;
@@ -511,7 +511,7 @@ message SecretServiceRemoveResponse {
 // sandbox uses through a placeholder. The sandbox receives only the placeholder
 // in the Env variable. For requests to matching Hosts, the host proxy replaces
 // the placeholder in request headers with the real secret, so the real value
-// never enters the guest. Rheic is vault-only: there are no literal header
+// never enters the guest. Gyrel is vault-only: there are no literal header
 // values.
 // Set exactly one of Value (inline, write-only, stored host-side) or Source
 // with a Reference or Command. Reference and command sources are resolved on
@@ -855,7 +855,7 @@ message MCPRegisterServerRequest {
   // security design; daemons must reject clients that request it (no field
   // exists to request it).
   // deferred (security): captured --skip-ssrf-check disables SSRF checks for
-  // the registration including OAuth metadata and redirects. Rheic enforces
+  // the registration including OAuth metadata and redirects. Gyrel enforces
   // network fail-closed with no permissive fallback; the flag is NOT modeled
   // and the divergence is recorded as a release blocker candidate in PLAN §6.
   // deferred (design): the captured --url field accepts three forms (manifest
@@ -1215,7 +1215,7 @@ enum ApprovalState {
 }
 
 // HeaderValueClass tells the user whether a header value comes from the host
-// vault or is a literal. Rheic is vault-only, so STATIC appears only to disclose
+// vault or is a literal. Gyrel is vault-only, so STATIC appears only to disclose
 // a non-compliant literal that a daemon found; it is never a valid way to supply
 // a value.
 enum HeaderValueClass {

@@ -1,11 +1,11 @@
 # sandboxes-api
 
-<img src="docs/assets/rheic-shark.png" alt="Rheic shark logo" width="180">
+<img src="docs/assets/gyrel-shark.png" alt="Gyrel shark logo" width="180">
 
 
 ## Import path migration
 
-The canonical Go module path is now `github.com/rheic/sandboxes-api` (previously `github.com/quoiner/sandboxes-api`). Update imports and `go.mod` requirements when moving to a release that includes this change. The old module path is not kept as a compatibility alias.
+The canonical Go module path is now `github.com/gyrel/sandboxes-api`. Update imports and `go.mod` requirements when moving to a release that includes this change. The previous module path is not kept as a compatibility alias.
 
 Status: pre-alpha.
 
@@ -79,7 +79,7 @@ invalid bundle fails closed with a typed gRPC status instead of returning a
 partial view.
 
 The local RPC contract version advances to 0.0.26 with this RPC. Downstream
-modules must bump `github.com/rheic/sandboxes-api` to the release that carries
+modules must bump `github.com/gyrel/sandboxes-api` to the release that carries
 contract 0.0.26 before using it. `NetworkRule.origin` is additive: older
 daemons omit it and clients treat an empty origin as `local`.
 
