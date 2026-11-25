@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  title: RHEIC Sandboxes Cloud API
+  title: GYREL Sandboxes Cloud API
   version: v1
   description: >-
     Single-operator self-hosted control-plane preview contract. This API stores

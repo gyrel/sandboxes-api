@@ -6,7 +6,7 @@ import (
 
 	"google.golang.org/protobuf/reflect/protoreflect"
 
-	localv1 "github.com/rheic/sandboxes-api/gen/go/sandboxes/local/v1"
+	localv1 "github.com/gyrel/sandboxes-api/gen/go/sandboxes/local/v1"
 )
 
 // Deferred: registry/manifest URLs, static MCP configuration, discovery/DCR

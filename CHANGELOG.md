@@ -6,6 +6,13 @@
 
 ## Unreleased
 
+### Changed
+
+- Rename the GitHub organization and Go module path. The canonical module path
+  is now `github.com/gyrel/sandboxes-api`. Update imports and `go.mod`
+  requirements when moving to a release that includes this change. The previous
+  module path is not kept as a compatibility alias.
+
 ### Added (contract 0.0.37)
 
 - `KitPolicyService` (`CheckKit`, `GetKitPolicyConfig`) exposes the daemon's kit
@@ -61,7 +68,7 @@
 - Additive: no existing field, message or RPC was changed or removed. Readers
   predating 0.0.36 ignore the new RPCs and summary fields.
 - Local-surface only. Cloud `--cloud` flags, `--header` and `--format` for
-  literal header injection are not modeled; Rheic is vault-only.
+  literal header injection are not modeled; Gyrel is vault-only.
 
 ### Added (contract 0.0.35)
 

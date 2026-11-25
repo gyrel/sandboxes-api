@@ -527,7 +527,7 @@ func (ApprovalState) EnumDescriptor() ([]byte, []int) {
 }
 
 // HeaderValueClass tells the user whether a header value comes from the host
-// vault or is a literal. Rheic is vault-only, so STATIC appears only to disclose
+// vault or is a literal. Gyrel is vault-only, so STATIC appears only to disclose
 // a non-compliant literal that a daemon found; it is never a valid way to supply
 // a value.
 type HeaderValueClass int32
@@ -4729,7 +4729,7 @@ func (x *SecretServiceRemoveResponse) GetRemoved() bool {
 // sandbox uses through a placeholder. The sandbox receives only the placeholder
 // in the Env variable. For requests to matching Hosts, the host proxy replaces
 // the placeholder in request headers with the real secret, so the real value
-// never enters the guest. Rheic is vault-only: there are no literal header
+// never enters the guest. Gyrel is vault-only: there are no literal header
 // values.
 // Set exactly one of Value (inline, write-only, stored host-side) or Source
 // with a Reference or Command. Reference and command sources are resolved on
@@ -10828,7 +10828,7 @@ const file_sandboxes_local_v1_sandbox_proto_rawDesc = "" +
 	"\aRespond\x121.sandboxes.local.v1.ApprovalServiceRespondRequest\x1a2.sandboxes.local.v1.ApprovalServiceRespondResponse2\xde\x01\n" +
 	"\x10KitPolicyService\x12U\n" +
 	"\bCheckKit\x12#.sandboxes.local.v1.CheckKitRequest\x1a$.sandboxes.local.v1.CheckKitResponse\x12s\n" +
-	"\x12GetKitPolicyConfig\x12-.sandboxes.local.v1.GetKitPolicyConfigRequest\x1a..sandboxes.local.v1.GetKitPolicyConfigResponseBBZ@github.com/rheic/sandboxes-api/gen/go/sandboxes/local/v1;localv1b\x06proto3"
+	"\x12GetKitPolicyConfig\x12-.sandboxes.local.v1.GetKitPolicyConfigRequest\x1a..sandboxes.local.v1.GetKitPolicyConfigResponseBBZ@github.com/gyrel/sandboxes-api/gen/go/sandboxes/local/v1;localv1b\x06proto3"
 
 var (
 	file_sandboxes_local_v1_sandbox_proto_rawDescOnce sync.Once
