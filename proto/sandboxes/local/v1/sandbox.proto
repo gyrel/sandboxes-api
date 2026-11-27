@@ -120,6 +120,11 @@ message Sandbox {
   CloneInfo clone_info = 22;
   // Shared skills configuration selected when the sandbox was created.
   SkillsOptions skills = 23;
+  // Up to 16 labels. Keys must match [A-Za-z0-9][A-Za-z0-9._-]{0,62}.
+  // Values may contain up to 255 characters. As with MCP headers, the host
+  // rejects credential-looking keys. Label values may be visible to others.
+  // Do not store secrets in labels.
+  map<string, string> labels = 24;
 }
 
 // Progress carries a transient, human-resumable view of a long-running
@@ -174,6 +179,11 @@ message CreateRequest {
   // Omitted means shared skills are disabled. The daemon must reject unknown
   // modes and cannot silently downgrade a requested read-only mount.
   SkillsOptions skills = 18;
+  // Up to 16 labels. Keys must match [A-Za-z0-9][A-Za-z0-9._-]{0,62}.
+  // Values may contain up to 255 characters. As with MCP headers, the host
+  // rejects credential-looking keys. Label values may be visible to others.
+  // Do not store secrets in labels.
+  map<string, string> labels = 19;
 }
 
 enum SkillsMode {

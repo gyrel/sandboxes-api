@@ -1141,7 +1141,12 @@ type Sandbox struct {
 	// Clone metadata. GitEndpoint is present only while the guest is running.
 	CloneInfo *CloneInfo `protobuf:"bytes,22,opt,name=clone_info,json=cloneInfo,proto3" json:"clone_info,omitempty"`
 	// Shared skills configuration selected when the sandbox was created.
-	Skills        *SkillsOptions `protobuf:"bytes,23,opt,name=skills,proto3" json:"skills,omitempty"`
+	Skills *SkillsOptions `protobuf:"bytes,23,opt,name=skills,proto3" json:"skills,omitempty"`
+	// Up to 16 labels. Keys must match [A-Za-z0-9][A-Za-z0-9._-]{0,62}.
+	// Values may contain up to 255 characters. As with MCP headers, the host
+	// rejects credential-looking keys. Label values may be visible to others.
+	// Do not store secrets in labels.
+	Labels        map[string]string `protobuf:"bytes,24,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1333,6 +1338,13 @@ func (x *Sandbox) GetCloneInfo() *CloneInfo {
 func (x *Sandbox) GetSkills() *SkillsOptions {
 	if x != nil {
 		return x.Skills
+	}
+	return nil
+}
+
+func (x *Sandbox) GetLabels() map[string]string {
+	if x != nil {
+		return x.Labels
 	}
 	return nil
 }
@@ -1539,7 +1551,12 @@ type CreateRequest struct {
 	Clone *CloneOptions `protobuf:"bytes,17,opt,name=clone,proto3" json:"clone,omitempty"`
 	// Omitted means shared skills are disabled. The daemon must reject unknown
 	// modes and cannot silently downgrade a requested read-only mount.
-	Skills        *SkillsOptions `protobuf:"bytes,18,opt,name=skills,proto3" json:"skills,omitempty"`
+	Skills *SkillsOptions `protobuf:"bytes,18,opt,name=skills,proto3" json:"skills,omitempty"`
+	// Up to 16 labels. Keys must match [A-Za-z0-9][A-Za-z0-9._-]{0,62}.
+	// Values may contain up to 255 characters. As with MCP headers, the host
+	// rejects credential-looking keys. Label values may be visible to others.
+	// Do not store secrets in labels.
+	Labels        map[string]string `protobuf:"bytes,19,rep,name=labels,proto3" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1696,6 +1713,13 @@ func (x *CreateRequest) GetClone() *CloneOptions {
 func (x *CreateRequest) GetSkills() *SkillsOptions {
 	if x != nil {
 		return x.Skills
+	}
+	return nil
+}
+
+func (x *CreateRequest) GetLabels() map[string]string {
+	if x != nil {
+		return x.Labels
 	}
 	return nil
 }
@@ -10029,7 +10053,7 @@ const file_sandboxes_local_v1_sandbox_proto_rawDesc = "" +
 	"\x04path\x18\x01 \x01(\tR\x04path\x12\x1b\n" +
 	"\tread_only\x18\x02 \x01(\bR\breadOnly\x12\x1d\n" +
 	"\n" +
-	"guest_path\x18\x03 \x01(\tR\tguestPath\"\x86\a\n" +
+	"guest_path\x18\x03 \x01(\tR\tguestPath\"\x82\b\n" +
 	"\aSandbox\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x126\n" +
@@ -10060,7 +10084,11 @@ const file_sandboxes_local_v1_sandbox_proto_rawDesc = "" +
 	"\x0epolicy_profile\x18\x15 \x01(\tR\rpolicyProfile\x12<\n" +
 	"\n" +
 	"clone_info\x18\x16 \x01(\v2\x1d.sandboxes.local.v1.CloneInfoR\tcloneInfo\x129\n" +
-	"\x06skills\x18\x17 \x01(\v2!.sandboxes.local.v1.SkillsOptionsR\x06skills\"T\n" +
+	"\x06skills\x18\x17 \x01(\v2!.sandboxes.local.v1.SkillsOptionsR\x06skills\x12?\n" +
+	"\x06labels\x18\x18 \x03(\v2'.sandboxes.local.v1.Sandbox.LabelsEntryR\x06labels\x1a9\n" +
+	"\vLabelsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"T\n" +
 	"\bProgress\x12\x14\n" +
 	"\x05phase\x18\x01 \x01(\tR\x05phase\x12\x1c\n" +
 	"\tcompleted\x18\x02 \x01(\x03R\tcompleted\x12\x14\n" +
@@ -10077,7 +10105,7 @@ const file_sandboxes_local_v1_sandbox_proto_rawDesc = "" +
 	"\x05error\x18\x06 \x01(\tR\x05error\x12&\n" +
 	"\x0fcreated_at_unix\x18\a \x01(\x03R\rcreatedAtUnix\x12&\n" +
 	"\x0fupdated_at_unix\x18\b \x01(\x03R\rupdatedAtUnix\x128\n" +
-	"\bprogress\x18\t \x01(\v2\x1c.sandboxes.local.v1.ProgressR\bprogress\"\xc2\x06\n" +
+	"\bprogress\x18\t \x01(\v2\x1c.sandboxes.local.v1.ProgressR\bprogress\"\xc4\a\n" +
 	"\rCreateRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05image\x18\x02 \x01(\tR\x05image\x12\x1c\n" +
@@ -10102,8 +10130,12 @@ const file_sandboxes_local_v1_sandbox_proto_rawDesc = "" +
 	"privileged\x12P\n" +
 	"\x11oauth_credentials\x18\x10 \x03(\v2#.sandboxes.local.v1.OAuthCredentialR\x10oauthCredentials\x126\n" +
 	"\x05clone\x18\x11 \x01(\v2 .sandboxes.local.v1.CloneOptionsR\x05clone\x129\n" +
-	"\x06skills\x18\x12 \x01(\v2!.sandboxes.local.v1.SkillsOptionsR\x06skills\x1a6\n" +
+	"\x06skills\x18\x12 \x01(\v2!.sandboxes.local.v1.SkillsOptionsR\x06skills\x12E\n" +
+	"\x06labels\x18\x13 \x03(\v2-.sandboxes.local.v1.CreateRequest.LabelsEntryR\x06labels\x1a6\n" +
 	"\bEnvEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\x1a9\n" +
+	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"b\n" +
 	"\rSkillsOptions\x122\n" +
@@ -10843,7 +10875,7 @@ func file_sandboxes_local_v1_sandbox_proto_rawDescGZIP() []byte {
 }
 
 var file_sandboxes_local_v1_sandbox_proto_enumTypes = make([]protoimpl.EnumInfo, 14)
-var file_sandboxes_local_v1_sandbox_proto_msgTypes = make([]protoimpl.MessageInfo, 149)
+var file_sandboxes_local_v1_sandbox_proto_msgTypes = make([]protoimpl.MessageInfo, 151)
 var file_sandboxes_local_v1_sandbox_proto_goTypes = []any{
 	(SandboxState)(0),                               // 0: sandboxes.local.v1.SandboxState
 	(OperationKind)(0),                              // 1: sandboxes.local.v1.OperationKind
@@ -11005,9 +11037,11 @@ var file_sandboxes_local_v1_sandbox_proto_goTypes = []any{
 	(*CheckKitResponse)(nil),                        // 157: sandboxes.local.v1.CheckKitResponse
 	(*GetKitPolicyConfigRequest)(nil),               // 158: sandboxes.local.v1.GetKitPolicyConfigRequest
 	(*GetKitPolicyConfigResponse)(nil),              // 159: sandboxes.local.v1.GetKitPolicyConfigResponse
-	nil,                                             // 160: sandboxes.local.v1.CreateRequest.EnvEntry
-	nil,                                             // 161: sandboxes.local.v1.MCPRegisterServerRequest.HeadersEntry
-	nil,                                             // 162: sandboxes.local.v1.MCPRegisterServerRequest.SecretHeadersEntry
+	nil,                                             // 160: sandboxes.local.v1.Sandbox.LabelsEntry
+	nil,                                             // 161: sandboxes.local.v1.CreateRequest.EnvEntry
+	nil,                                             // 162: sandboxes.local.v1.CreateRequest.LabelsEntry
+	nil,                                             // 163: sandboxes.local.v1.MCPRegisterServerRequest.HeadersEntry
+	nil,                                             // 164: sandboxes.local.v1.MCPRegisterServerRequest.SecretHeadersEntry
 }
 var file_sandboxes_local_v1_sandbox_proto_depIdxs = []int32{
 	15,  // 0: sandboxes.local.v1.NetworkRule.query:type_name -> sandboxes.local.v1.HTTPQueryCondition
@@ -11018,211 +11052,213 @@ var file_sandboxes_local_v1_sandbox_proto_depIdxs = []int32{
 	14,  // 5: sandboxes.local.v1.Sandbox.deny:type_name -> sandboxes.local.v1.NetworkRule
 	24,  // 6: sandboxes.local.v1.Sandbox.clone_info:type_name -> sandboxes.local.v1.CloneInfo
 	22,  // 7: sandboxes.local.v1.Sandbox.skills:type_name -> sandboxes.local.v1.SkillsOptions
-	1,   // 8: sandboxes.local.v1.Operation.kind:type_name -> sandboxes.local.v1.OperationKind
-	2,   // 9: sandboxes.local.v1.Operation.state:type_name -> sandboxes.local.v1.OperationState
-	19,  // 10: sandboxes.local.v1.Operation.progress:type_name -> sandboxes.local.v1.Progress
-	17,  // 11: sandboxes.local.v1.CreateRequest.workspaces:type_name -> sandboxes.local.v1.Workspace
-	16,  // 12: sandboxes.local.v1.CreateRequest.ports:type_name -> sandboxes.local.v1.Port
-	14,  // 13: sandboxes.local.v1.CreateRequest.allow:type_name -> sandboxes.local.v1.NetworkRule
-	14,  // 14: sandboxes.local.v1.CreateRequest.deny:type_name -> sandboxes.local.v1.NetworkRule
-	160, // 15: sandboxes.local.v1.CreateRequest.env:type_name -> sandboxes.local.v1.CreateRequest.EnvEntry
-	26,  // 16: sandboxes.local.v1.CreateRequest.oauth_credentials:type_name -> sandboxes.local.v1.OAuthCredential
-	23,  // 17: sandboxes.local.v1.CreateRequest.clone:type_name -> sandboxes.local.v1.CloneOptions
-	22,  // 18: sandboxes.local.v1.CreateRequest.skills:type_name -> sandboxes.local.v1.SkillsOptions
-	4,   // 19: sandboxes.local.v1.SkillsOptions.mode:type_name -> sandboxes.local.v1.SkillsMode
-	25,  // 20: sandboxes.local.v1.CloneInfo.git_endpoint:type_name -> sandboxes.local.v1.GitEndpoint
-	27,  // 21: sandboxes.local.v1.OAuthCredential.token_endpoint:type_name -> sandboxes.local.v1.OAuthTokenEndpoint
-	28,  // 22: sandboxes.local.v1.OAuthCredential.sentinels:type_name -> sandboxes.local.v1.OAuthSentinels
-	29,  // 23: sandboxes.local.v1.OAuthCredential.credential_file:type_name -> sandboxes.local.v1.OAuthCredentialFile
-	30,  // 24: sandboxes.local.v1.OAuthCredential.response_fields:type_name -> sandboxes.local.v1.OAuthResponseFields
-	18,  // 25: sandboxes.local.v1.GetResponse.sandbox:type_name -> sandboxes.local.v1.Sandbox
-	18,  // 26: sandboxes.local.v1.ListResponse.items:type_name -> sandboxes.local.v1.Sandbox
-	18,  // 27: sandboxes.local.v1.WatchResponse.sandbox:type_name -> sandboxes.local.v1.Sandbox
-	20,  // 28: sandboxes.local.v1.WatchResponse.operation:type_name -> sandboxes.local.v1.Operation
-	20,  // 29: sandboxes.local.v1.CreateResponse.operation:type_name -> sandboxes.local.v1.Operation
-	20,  // 30: sandboxes.local.v1.StartResponse.operation:type_name -> sandboxes.local.v1.Operation
-	20,  // 31: sandboxes.local.v1.StopResponse.operation:type_name -> sandboxes.local.v1.Operation
-	20,  // 32: sandboxes.local.v1.DeleteResponse.operation:type_name -> sandboxes.local.v1.Operation
-	48,  // 33: sandboxes.local.v1.ExecSessionRequest.open:type_name -> sandboxes.local.v1.ExecSessionOpen
-	49,  // 34: sandboxes.local.v1.ExecSessionRequest.resize:type_name -> sandboxes.local.v1.ExecSessionResize
-	20,  // 35: sandboxes.local.v1.OperationServiceGetResponse.operation:type_name -> sandboxes.local.v1.Operation
-	20,  // 36: sandboxes.local.v1.OperationServiceWaitResponse.operation:type_name -> sandboxes.local.v1.Operation
-	3,   // 37: sandboxes.local.v1.RegistryCredentialServiceLoginRequest.scope:type_name -> sandboxes.local.v1.RegistryCredentialScope
-	3,   // 38: sandboxes.local.v1.RegistryCredentialServiceLoginResponse.scope:type_name -> sandboxes.local.v1.RegistryCredentialScope
-	3,   // 39: sandboxes.local.v1.RegistryCredentialServiceLogoutRequest.scope:type_name -> sandboxes.local.v1.RegistryCredentialScope
-	58,  // 40: sandboxes.local.v1.RegistryCredentialServiceListResponse.credentials:type_name -> sandboxes.local.v1.RegistryCredentialSummary
-	61,  // 41: sandboxes.local.v1.SecretServiceSetRequest.source:type_name -> sandboxes.local.v1.SecretSource
-	63,  // 42: sandboxes.local.v1.SecretServiceSetResponse.secret:type_name -> sandboxes.local.v1.SecretSummary
-	61,  // 43: sandboxes.local.v1.SecretServiceCreateRequest.source:type_name -> sandboxes.local.v1.SecretSource
-	63,  // 44: sandboxes.local.v1.SecretServiceCreateResponse.secret:type_name -> sandboxes.local.v1.SecretSummary
-	63,  // 45: sandboxes.local.v1.SecretServiceListResponse.secrets:type_name -> sandboxes.local.v1.SecretSummary
-	61,  // 46: sandboxes.local.v1.SecretServiceSetCustomRequest.source:type_name -> sandboxes.local.v1.SecretSource
-	63,  // 47: sandboxes.local.v1.SecretServiceSetCustomResponse.secret:type_name -> sandboxes.local.v1.SecretSummary
-	14,  // 48: sandboxes.local.v1.UpdatePolicyRequest.allow:type_name -> sandboxes.local.v1.NetworkRule
-	14,  // 49: sandboxes.local.v1.UpdatePolicyRequest.deny:type_name -> sandboxes.local.v1.NetworkRule
-	18,  // 50: sandboxes.local.v1.UpdatePolicyResponse.sandbox:type_name -> sandboxes.local.v1.Sandbox
-	14,  // 51: sandboxes.local.v1.MutatePolicyRequest.rule:type_name -> sandboxes.local.v1.NetworkRule
-	18,  // 52: sandboxes.local.v1.MutatePolicyResponse.sandbox:type_name -> sandboxes.local.v1.Sandbox
-	16,  // 53: sandboxes.local.v1.UpdatePortsRequest.ports:type_name -> sandboxes.local.v1.Port
-	18,  // 54: sandboxes.local.v1.UpdatePortsResponse.sandbox:type_name -> sandboxes.local.v1.Sandbox
-	14,  // 55: sandboxes.local.v1.GetGlobalPolicyResponse.allow:type_name -> sandboxes.local.v1.NetworkRule
-	14,  // 56: sandboxes.local.v1.GetGlobalPolicyResponse.deny:type_name -> sandboxes.local.v1.NetworkRule
-	14,  // 57: sandboxes.local.v1.MutateGlobalPolicyRequest.rule:type_name -> sandboxes.local.v1.NetworkRule
-	14,  // 58: sandboxes.local.v1.MutateGlobalPolicyResponse.allow:type_name -> sandboxes.local.v1.NetworkRule
-	14,  // 59: sandboxes.local.v1.MutateGlobalPolicyResponse.deny:type_name -> sandboxes.local.v1.NetworkRule
-	14,  // 60: sandboxes.local.v1.ResetGlobalPolicyResponse.allow:type_name -> sandboxes.local.v1.NetworkRule
-	14,  // 61: sandboxes.local.v1.ResetGlobalPolicyResponse.deny:type_name -> sandboxes.local.v1.NetworkRule
-	97,  // 62: sandboxes.local.v1.GetOrgPolicyResponse.rules:type_name -> sandboxes.local.v1.OrgPolicyRule
-	161, // 63: sandboxes.local.v1.MCPRegisterServerRequest.headers:type_name -> sandboxes.local.v1.MCPRegisterServerRequest.HeadersEntry
-	162, // 64: sandboxes.local.v1.MCPRegisterServerRequest.secret_headers:type_name -> sandboxes.local.v1.MCPRegisterServerRequest.SecretHeadersEntry
-	112, // 65: sandboxes.local.v1.MCPRegisterServerResponse.server:type_name -> sandboxes.local.v1.MCPServerSummary
-	112, // 66: sandboxes.local.v1.MCPApproveRegistrationResponse.server:type_name -> sandboxes.local.v1.MCPServerSummary
-	112, // 67: sandboxes.local.v1.ListMCPServersResponse.servers:type_name -> sandboxes.local.v1.MCPServerSummary
-	5,   // 68: sandboxes.local.v1.MCPServerDetail.auth_status:type_name -> sandboxes.local.v1.MCPAuthStatus
-	6,   // 69: sandboxes.local.v1.MCPServerDetail.gateway_state:type_name -> sandboxes.local.v1.MCPGatewayState
-	120, // 70: sandboxes.local.v1.InspectMCPServerResponse.server:type_name -> sandboxes.local.v1.MCPServerDetail
-	5,   // 71: sandboxes.local.v1.MCPServerAuthStatus.status:type_name -> sandboxes.local.v1.MCPAuthStatus
-	5,   // 72: sandboxes.local.v1.GetMCPAuthStatusResponse.status:type_name -> sandboxes.local.v1.MCPAuthStatus
-	123, // 73: sandboxes.local.v1.GetMCPAuthStatusResponse.entries:type_name -> sandboxes.local.v1.MCPServerAuthStatus
-	135, // 74: sandboxes.local.v1.TemplateServiceSaveResponse.template:type_name -> sandboxes.local.v1.Template
-	135, // 75: sandboxes.local.v1.TemplateServiceLoadResponse.template:type_name -> sandboxes.local.v1.Template
-	135, // 76: sandboxes.local.v1.TemplateServiceListResponse.templates:type_name -> sandboxes.local.v1.Template
-	135, // 77: sandboxes.local.v1.TemplateServiceInspectResponse.template:type_name -> sandboxes.local.v1.Template
-	9,   // 78: sandboxes.local.v1.ApprovalHeader.value_class:type_name -> sandboxes.local.v1.HeaderValueClass
-	7,   // 79: sandboxes.local.v1.Approval.kind:type_name -> sandboxes.local.v1.ApprovalKind
-	8,   // 80: sandboxes.local.v1.Approval.state:type_name -> sandboxes.local.v1.ApprovalState
-	148, // 81: sandboxes.local.v1.Approval.headers:type_name -> sandboxes.local.v1.ApprovalHeader
-	149, // 82: sandboxes.local.v1.ApprovalServiceListResponse.approvals:type_name -> sandboxes.local.v1.Approval
-	149, // 83: sandboxes.local.v1.ApprovalServiceInspectResponse.approval:type_name -> sandboxes.local.v1.Approval
-	10,  // 84: sandboxes.local.v1.ApprovalServiceRespondRequest.decision:type_name -> sandboxes.local.v1.ApprovalDecision
-	11,  // 85: sandboxes.local.v1.ApprovalServiceRespondRequest.persist_scope:type_name -> sandboxes.local.v1.ApprovalPersistScope
-	149, // 86: sandboxes.local.v1.ApprovalServiceRespondResponse.approval:type_name -> sandboxes.local.v1.Approval
-	12,  // 87: sandboxes.local.v1.CheckKitRequest.source_kind:type_name -> sandboxes.local.v1.KitSourceKind
-	13,  // 88: sandboxes.local.v1.CheckKitResponse.reason:type_name -> sandboxes.local.v1.CheckKitReason
-	12,  // 89: sandboxes.local.v1.GetKitPolicyConfigResponse.allowed_sources:type_name -> sandboxes.local.v1.KitSourceKind
-	21,  // 90: sandboxes.local.v1.SandboxService.Create:input_type -> sandboxes.local.v1.CreateRequest
-	129, // 91: sandboxes.local.v1.SandboxService.GetVersion:input_type -> sandboxes.local.v1.GetVersionRequest
-	31,  // 92: sandboxes.local.v1.SandboxService.Get:input_type -> sandboxes.local.v1.GetRequest
-	32,  // 93: sandboxes.local.v1.SandboxService.List:input_type -> sandboxes.local.v1.ListRequest
-	35,  // 94: sandboxes.local.v1.SandboxService.Start:input_type -> sandboxes.local.v1.StartRequest
-	36,  // 95: sandboxes.local.v1.SandboxService.Stop:input_type -> sandboxes.local.v1.StopRequest
-	37,  // 96: sandboxes.local.v1.SandboxService.Delete:input_type -> sandboxes.local.v1.DeleteRequest
-	40,  // 97: sandboxes.local.v1.SandboxService.Watch:input_type -> sandboxes.local.v1.WatchRequest
-	46,  // 98: sandboxes.local.v1.SandboxService.Exec:input_type -> sandboxes.local.v1.ExecRequest
-	50,  // 99: sandboxes.local.v1.SandboxService.ExecSession:input_type -> sandboxes.local.v1.ExecSessionRequest
-	83,  // 100: sandboxes.local.v1.SandboxService.UpdatePolicy:input_type -> sandboxes.local.v1.UpdatePolicyRequest
-	85,  // 101: sandboxes.local.v1.SandboxService.MutatePolicy:input_type -> sandboxes.local.v1.MutatePolicyRequest
-	87,  // 102: sandboxes.local.v1.SandboxService.UpdatePorts:input_type -> sandboxes.local.v1.UpdatePortsRequest
-	131, // 103: sandboxes.local.v1.SandboxService.GetPolicyProfile:input_type -> sandboxes.local.v1.GetPolicyProfileRequest
-	133, // 104: sandboxes.local.v1.SandboxService.SetPolicyProfile:input_type -> sandboxes.local.v1.SetPolicyProfileRequest
-	89,  // 105: sandboxes.local.v1.SandboxService.GetGlobalPolicy:input_type -> sandboxes.local.v1.GetGlobalPolicyRequest
-	91,  // 106: sandboxes.local.v1.SandboxService.MutateGlobalPolicy:input_type -> sandboxes.local.v1.MutateGlobalPolicyRequest
-	100, // 107: sandboxes.local.v1.SandboxService.CheckPolicy:input_type -> sandboxes.local.v1.CheckPolicyRequest
-	113, // 108: sandboxes.local.v1.SandboxService.ListMCPServers:input_type -> sandboxes.local.v1.ListMCPServersRequest
-	106, // 109: sandboxes.local.v1.SandboxService.MCPRegisterServer:input_type -> sandboxes.local.v1.MCPRegisterServerRequest
-	108, // 110: sandboxes.local.v1.SandboxService.MCPApproveRegistration:input_type -> sandboxes.local.v1.MCPApproveRegistrationRequest
-	110, // 111: sandboxes.local.v1.SandboxService.MCPRemoveServer:input_type -> sandboxes.local.v1.MCPRemoveServerRequest
-	115, // 112: sandboxes.local.v1.SandboxService.MCPLoadServer:input_type -> sandboxes.local.v1.MCPLoadServerRequest
-	117, // 113: sandboxes.local.v1.SandboxService.MCPUnloadServer:input_type -> sandboxes.local.v1.MCPUnloadServerRequest
-	119, // 114: sandboxes.local.v1.SandboxService.InspectMCPServer:input_type -> sandboxes.local.v1.InspectMCPServerRequest
-	122, // 115: sandboxes.local.v1.SandboxService.GetMCPAuthStatus:input_type -> sandboxes.local.v1.GetMCPAuthStatusRequest
-	125, // 116: sandboxes.local.v1.SandboxService.RemoveMCPAuth:input_type -> sandboxes.local.v1.RemoveMCPAuthRequest
-	127, // 117: sandboxes.local.v1.SandboxService.StartMCPAuth:input_type -> sandboxes.local.v1.StartMCPAuthRequest
-	102, // 118: sandboxes.local.v1.SandboxService.MCPCall:input_type -> sandboxes.local.v1.MCPCallRequest
-	104, // 119: sandboxes.local.v1.SandboxService.MCPApproveCall:input_type -> sandboxes.local.v1.MCPApproveCallRequest
-	93,  // 120: sandboxes.local.v1.SandboxService.RefreshPolicies:input_type -> sandboxes.local.v1.RefreshPoliciesRequest
-	95,  // 121: sandboxes.local.v1.SandboxService.ResetGlobalPolicy:input_type -> sandboxes.local.v1.ResetGlobalPolicyRequest
-	98,  // 122: sandboxes.local.v1.SandboxService.GetOrgPolicy:input_type -> sandboxes.local.v1.GetOrgPolicyRequest
-	38,  // 123: sandboxes.local.v1.OperationService.Get:input_type -> sandboxes.local.v1.OperationServiceGetRequest
-	39,  // 124: sandboxes.local.v1.OperationService.Wait:input_type -> sandboxes.local.v1.OperationServiceWaitRequest
-	54,  // 125: sandboxes.local.v1.RegistryCredentialService.Login:input_type -> sandboxes.local.v1.RegistryCredentialServiceLoginRequest
-	56,  // 126: sandboxes.local.v1.RegistryCredentialService.Logout:input_type -> sandboxes.local.v1.RegistryCredentialServiceLogoutRequest
-	57,  // 127: sandboxes.local.v1.RegistryCredentialService.List:input_type -> sandboxes.local.v1.RegistryCredentialServiceListRequest
-	62,  // 128: sandboxes.local.v1.SecretService.Set:input_type -> sandboxes.local.v1.SecretServiceSetRequest
-	65,  // 129: sandboxes.local.v1.SecretService.Create:input_type -> sandboxes.local.v1.SecretServiceCreateRequest
-	67,  // 130: sandboxes.local.v1.SecretService.List:input_type -> sandboxes.local.v1.SecretServiceListRequest
-	69,  // 131: sandboxes.local.v1.SecretService.Remove:input_type -> sandboxes.local.v1.SecretServiceRemoveRequest
-	71,  // 132: sandboxes.local.v1.SecretService.SetCustom:input_type -> sandboxes.local.v1.SecretServiceSetCustomRequest
-	73,  // 133: sandboxes.local.v1.AccountService.Login:input_type -> sandboxes.local.v1.AccountServiceLoginRequest
-	81,  // 134: sandboxes.local.v1.AccountService.LoginDevice:input_type -> sandboxes.local.v1.AccountServiceLoginDeviceRequest
-	75,  // 135: sandboxes.local.v1.AccountService.LoginWithPAT:input_type -> sandboxes.local.v1.AccountServiceLoginWithPATRequest
-	77,  // 136: sandboxes.local.v1.AccountService.Logout:input_type -> sandboxes.local.v1.AccountServiceLogoutRequest
-	79,  // 137: sandboxes.local.v1.AccountService.Status:input_type -> sandboxes.local.v1.AccountServiceStatusRequest
-	136, // 138: sandboxes.local.v1.TemplateService.Save:input_type -> sandboxes.local.v1.TemplateServiceSaveRequest
-	138, // 139: sandboxes.local.v1.TemplateService.Load:input_type -> sandboxes.local.v1.TemplateServiceLoadRequest
-	140, // 140: sandboxes.local.v1.TemplateService.Remove:input_type -> sandboxes.local.v1.TemplateServiceRemoveRequest
-	142, // 141: sandboxes.local.v1.TemplateService.List:input_type -> sandboxes.local.v1.TemplateServiceListRequest
-	144, // 142: sandboxes.local.v1.TemplateService.Inspect:input_type -> sandboxes.local.v1.TemplateServiceInspectRequest
-	145, // 143: sandboxes.local.v1.TemplateService.Export:input_type -> sandboxes.local.v1.TemplateServiceExportRequest
-	150, // 144: sandboxes.local.v1.ApprovalService.List:input_type -> sandboxes.local.v1.ApprovalServiceListRequest
-	152, // 145: sandboxes.local.v1.ApprovalService.Inspect:input_type -> sandboxes.local.v1.ApprovalServiceInspectRequest
-	154, // 146: sandboxes.local.v1.ApprovalService.Respond:input_type -> sandboxes.local.v1.ApprovalServiceRespondRequest
-	156, // 147: sandboxes.local.v1.KitPolicyService.CheckKit:input_type -> sandboxes.local.v1.CheckKitRequest
-	158, // 148: sandboxes.local.v1.KitPolicyService.GetKitPolicyConfig:input_type -> sandboxes.local.v1.GetKitPolicyConfigRequest
-	42,  // 149: sandboxes.local.v1.SandboxService.Create:output_type -> sandboxes.local.v1.CreateResponse
-	130, // 150: sandboxes.local.v1.SandboxService.GetVersion:output_type -> sandboxes.local.v1.GetVersionResponse
-	33,  // 151: sandboxes.local.v1.SandboxService.Get:output_type -> sandboxes.local.v1.GetResponse
-	34,  // 152: sandboxes.local.v1.SandboxService.List:output_type -> sandboxes.local.v1.ListResponse
-	43,  // 153: sandboxes.local.v1.SandboxService.Start:output_type -> sandboxes.local.v1.StartResponse
-	44,  // 154: sandboxes.local.v1.SandboxService.Stop:output_type -> sandboxes.local.v1.StopResponse
-	45,  // 155: sandboxes.local.v1.SandboxService.Delete:output_type -> sandboxes.local.v1.DeleteResponse
-	41,  // 156: sandboxes.local.v1.SandboxService.Watch:output_type -> sandboxes.local.v1.WatchResponse
-	47,  // 157: sandboxes.local.v1.SandboxService.Exec:output_type -> sandboxes.local.v1.ExecResponse
-	51,  // 158: sandboxes.local.v1.SandboxService.ExecSession:output_type -> sandboxes.local.v1.ExecSessionResponse
-	84,  // 159: sandboxes.local.v1.SandboxService.UpdatePolicy:output_type -> sandboxes.local.v1.UpdatePolicyResponse
-	86,  // 160: sandboxes.local.v1.SandboxService.MutatePolicy:output_type -> sandboxes.local.v1.MutatePolicyResponse
-	88,  // 161: sandboxes.local.v1.SandboxService.UpdatePorts:output_type -> sandboxes.local.v1.UpdatePortsResponse
-	132, // 162: sandboxes.local.v1.SandboxService.GetPolicyProfile:output_type -> sandboxes.local.v1.GetPolicyProfileResponse
-	134, // 163: sandboxes.local.v1.SandboxService.SetPolicyProfile:output_type -> sandboxes.local.v1.SetPolicyProfileResponse
-	90,  // 164: sandboxes.local.v1.SandboxService.GetGlobalPolicy:output_type -> sandboxes.local.v1.GetGlobalPolicyResponse
-	92,  // 165: sandboxes.local.v1.SandboxService.MutateGlobalPolicy:output_type -> sandboxes.local.v1.MutateGlobalPolicyResponse
-	101, // 166: sandboxes.local.v1.SandboxService.CheckPolicy:output_type -> sandboxes.local.v1.CheckPolicyResponse
-	114, // 167: sandboxes.local.v1.SandboxService.ListMCPServers:output_type -> sandboxes.local.v1.ListMCPServersResponse
-	107, // 168: sandboxes.local.v1.SandboxService.MCPRegisterServer:output_type -> sandboxes.local.v1.MCPRegisterServerResponse
-	109, // 169: sandboxes.local.v1.SandboxService.MCPApproveRegistration:output_type -> sandboxes.local.v1.MCPApproveRegistrationResponse
-	111, // 170: sandboxes.local.v1.SandboxService.MCPRemoveServer:output_type -> sandboxes.local.v1.MCPRemoveServerResponse
-	116, // 171: sandboxes.local.v1.SandboxService.MCPLoadServer:output_type -> sandboxes.local.v1.MCPLoadServerResponse
-	118, // 172: sandboxes.local.v1.SandboxService.MCPUnloadServer:output_type -> sandboxes.local.v1.MCPUnloadServerResponse
-	121, // 173: sandboxes.local.v1.SandboxService.InspectMCPServer:output_type -> sandboxes.local.v1.InspectMCPServerResponse
-	124, // 174: sandboxes.local.v1.SandboxService.GetMCPAuthStatus:output_type -> sandboxes.local.v1.GetMCPAuthStatusResponse
-	126, // 175: sandboxes.local.v1.SandboxService.RemoveMCPAuth:output_type -> sandboxes.local.v1.RemoveMCPAuthResponse
-	128, // 176: sandboxes.local.v1.SandboxService.StartMCPAuth:output_type -> sandboxes.local.v1.StartMCPAuthResponse
-	103, // 177: sandboxes.local.v1.SandboxService.MCPCall:output_type -> sandboxes.local.v1.MCPCallResponse
-	105, // 178: sandboxes.local.v1.SandboxService.MCPApproveCall:output_type -> sandboxes.local.v1.MCPApproveCallResponse
-	94,  // 179: sandboxes.local.v1.SandboxService.RefreshPolicies:output_type -> sandboxes.local.v1.RefreshPoliciesResponse
-	96,  // 180: sandboxes.local.v1.SandboxService.ResetGlobalPolicy:output_type -> sandboxes.local.v1.ResetGlobalPolicyResponse
-	99,  // 181: sandboxes.local.v1.SandboxService.GetOrgPolicy:output_type -> sandboxes.local.v1.GetOrgPolicyResponse
-	52,  // 182: sandboxes.local.v1.OperationService.Get:output_type -> sandboxes.local.v1.OperationServiceGetResponse
-	53,  // 183: sandboxes.local.v1.OperationService.Wait:output_type -> sandboxes.local.v1.OperationServiceWaitResponse
-	55,  // 184: sandboxes.local.v1.RegistryCredentialService.Login:output_type -> sandboxes.local.v1.RegistryCredentialServiceLoginResponse
-	60,  // 185: sandboxes.local.v1.RegistryCredentialService.Logout:output_type -> sandboxes.local.v1.RegistryCredentialServiceLogoutResponse
-	59,  // 186: sandboxes.local.v1.RegistryCredentialService.List:output_type -> sandboxes.local.v1.RegistryCredentialServiceListResponse
-	64,  // 187: sandboxes.local.v1.SecretService.Set:output_type -> sandboxes.local.v1.SecretServiceSetResponse
-	66,  // 188: sandboxes.local.v1.SecretService.Create:output_type -> sandboxes.local.v1.SecretServiceCreateResponse
-	68,  // 189: sandboxes.local.v1.SecretService.List:output_type -> sandboxes.local.v1.SecretServiceListResponse
-	70,  // 190: sandboxes.local.v1.SecretService.Remove:output_type -> sandboxes.local.v1.SecretServiceRemoveResponse
-	72,  // 191: sandboxes.local.v1.SecretService.SetCustom:output_type -> sandboxes.local.v1.SecretServiceSetCustomResponse
-	74,  // 192: sandboxes.local.v1.AccountService.Login:output_type -> sandboxes.local.v1.AccountServiceLoginResponse
-	82,  // 193: sandboxes.local.v1.AccountService.LoginDevice:output_type -> sandboxes.local.v1.AccountServiceLoginDeviceResponse
-	76,  // 194: sandboxes.local.v1.AccountService.LoginWithPAT:output_type -> sandboxes.local.v1.AccountServiceLoginWithPATResponse
-	78,  // 195: sandboxes.local.v1.AccountService.Logout:output_type -> sandboxes.local.v1.AccountServiceLogoutResponse
-	80,  // 196: sandboxes.local.v1.AccountService.Status:output_type -> sandboxes.local.v1.AccountServiceStatusResponse
-	137, // 197: sandboxes.local.v1.TemplateService.Save:output_type -> sandboxes.local.v1.TemplateServiceSaveResponse
-	139, // 198: sandboxes.local.v1.TemplateService.Load:output_type -> sandboxes.local.v1.TemplateServiceLoadResponse
-	141, // 199: sandboxes.local.v1.TemplateService.Remove:output_type -> sandboxes.local.v1.TemplateServiceRemoveResponse
-	143, // 200: sandboxes.local.v1.TemplateService.List:output_type -> sandboxes.local.v1.TemplateServiceListResponse
-	147, // 201: sandboxes.local.v1.TemplateService.Inspect:output_type -> sandboxes.local.v1.TemplateServiceInspectResponse
-	146, // 202: sandboxes.local.v1.TemplateService.Export:output_type -> sandboxes.local.v1.TemplateServiceExportResponse
-	151, // 203: sandboxes.local.v1.ApprovalService.List:output_type -> sandboxes.local.v1.ApprovalServiceListResponse
-	153, // 204: sandboxes.local.v1.ApprovalService.Inspect:output_type -> sandboxes.local.v1.ApprovalServiceInspectResponse
-	155, // 205: sandboxes.local.v1.ApprovalService.Respond:output_type -> sandboxes.local.v1.ApprovalServiceRespondResponse
-	157, // 206: sandboxes.local.v1.KitPolicyService.CheckKit:output_type -> sandboxes.local.v1.CheckKitResponse
-	159, // 207: sandboxes.local.v1.KitPolicyService.GetKitPolicyConfig:output_type -> sandboxes.local.v1.GetKitPolicyConfigResponse
-	149, // [149:208] is the sub-list for method output_type
-	90,  // [90:149] is the sub-list for method input_type
-	90,  // [90:90] is the sub-list for extension type_name
-	90,  // [90:90] is the sub-list for extension extendee
-	0,   // [0:90] is the sub-list for field type_name
+	160, // 8: sandboxes.local.v1.Sandbox.labels:type_name -> sandboxes.local.v1.Sandbox.LabelsEntry
+	1,   // 9: sandboxes.local.v1.Operation.kind:type_name -> sandboxes.local.v1.OperationKind
+	2,   // 10: sandboxes.local.v1.Operation.state:type_name -> sandboxes.local.v1.OperationState
+	19,  // 11: sandboxes.local.v1.Operation.progress:type_name -> sandboxes.local.v1.Progress
+	17,  // 12: sandboxes.local.v1.CreateRequest.workspaces:type_name -> sandboxes.local.v1.Workspace
+	16,  // 13: sandboxes.local.v1.CreateRequest.ports:type_name -> sandboxes.local.v1.Port
+	14,  // 14: sandboxes.local.v1.CreateRequest.allow:type_name -> sandboxes.local.v1.NetworkRule
+	14,  // 15: sandboxes.local.v1.CreateRequest.deny:type_name -> sandboxes.local.v1.NetworkRule
+	161, // 16: sandboxes.local.v1.CreateRequest.env:type_name -> sandboxes.local.v1.CreateRequest.EnvEntry
+	26,  // 17: sandboxes.local.v1.CreateRequest.oauth_credentials:type_name -> sandboxes.local.v1.OAuthCredential
+	23,  // 18: sandboxes.local.v1.CreateRequest.clone:type_name -> sandboxes.local.v1.CloneOptions
+	22,  // 19: sandboxes.local.v1.CreateRequest.skills:type_name -> sandboxes.local.v1.SkillsOptions
+	162, // 20: sandboxes.local.v1.CreateRequest.labels:type_name -> sandboxes.local.v1.CreateRequest.LabelsEntry
+	4,   // 21: sandboxes.local.v1.SkillsOptions.mode:type_name -> sandboxes.local.v1.SkillsMode
+	25,  // 22: sandboxes.local.v1.CloneInfo.git_endpoint:type_name -> sandboxes.local.v1.GitEndpoint
+	27,  // 23: sandboxes.local.v1.OAuthCredential.token_endpoint:type_name -> sandboxes.local.v1.OAuthTokenEndpoint
+	28,  // 24: sandboxes.local.v1.OAuthCredential.sentinels:type_name -> sandboxes.local.v1.OAuthSentinels
+	29,  // 25: sandboxes.local.v1.OAuthCredential.credential_file:type_name -> sandboxes.local.v1.OAuthCredentialFile
+	30,  // 26: sandboxes.local.v1.OAuthCredential.response_fields:type_name -> sandboxes.local.v1.OAuthResponseFields
+	18,  // 27: sandboxes.local.v1.GetResponse.sandbox:type_name -> sandboxes.local.v1.Sandbox
+	18,  // 28: sandboxes.local.v1.ListResponse.items:type_name -> sandboxes.local.v1.Sandbox
+	18,  // 29: sandboxes.local.v1.WatchResponse.sandbox:type_name -> sandboxes.local.v1.Sandbox
+	20,  // 30: sandboxes.local.v1.WatchResponse.operation:type_name -> sandboxes.local.v1.Operation
+	20,  // 31: sandboxes.local.v1.CreateResponse.operation:type_name -> sandboxes.local.v1.Operation
+	20,  // 32: sandboxes.local.v1.StartResponse.operation:type_name -> sandboxes.local.v1.Operation
+	20,  // 33: sandboxes.local.v1.StopResponse.operation:type_name -> sandboxes.local.v1.Operation
+	20,  // 34: sandboxes.local.v1.DeleteResponse.operation:type_name -> sandboxes.local.v1.Operation
+	48,  // 35: sandboxes.local.v1.ExecSessionRequest.open:type_name -> sandboxes.local.v1.ExecSessionOpen
+	49,  // 36: sandboxes.local.v1.ExecSessionRequest.resize:type_name -> sandboxes.local.v1.ExecSessionResize
+	20,  // 37: sandboxes.local.v1.OperationServiceGetResponse.operation:type_name -> sandboxes.local.v1.Operation
+	20,  // 38: sandboxes.local.v1.OperationServiceWaitResponse.operation:type_name -> sandboxes.local.v1.Operation
+	3,   // 39: sandboxes.local.v1.RegistryCredentialServiceLoginRequest.scope:type_name -> sandboxes.local.v1.RegistryCredentialScope
+	3,   // 40: sandboxes.local.v1.RegistryCredentialServiceLoginResponse.scope:type_name -> sandboxes.local.v1.RegistryCredentialScope
+	3,   // 41: sandboxes.local.v1.RegistryCredentialServiceLogoutRequest.scope:type_name -> sandboxes.local.v1.RegistryCredentialScope
+	58,  // 42: sandboxes.local.v1.RegistryCredentialServiceListResponse.credentials:type_name -> sandboxes.local.v1.RegistryCredentialSummary
+	61,  // 43: sandboxes.local.v1.SecretServiceSetRequest.source:type_name -> sandboxes.local.v1.SecretSource
+	63,  // 44: sandboxes.local.v1.SecretServiceSetResponse.secret:type_name -> sandboxes.local.v1.SecretSummary
+	61,  // 45: sandboxes.local.v1.SecretServiceCreateRequest.source:type_name -> sandboxes.local.v1.SecretSource
+	63,  // 46: sandboxes.local.v1.SecretServiceCreateResponse.secret:type_name -> sandboxes.local.v1.SecretSummary
+	63,  // 47: sandboxes.local.v1.SecretServiceListResponse.secrets:type_name -> sandboxes.local.v1.SecretSummary
+	61,  // 48: sandboxes.local.v1.SecretServiceSetCustomRequest.source:type_name -> sandboxes.local.v1.SecretSource
+	63,  // 49: sandboxes.local.v1.SecretServiceSetCustomResponse.secret:type_name -> sandboxes.local.v1.SecretSummary
+	14,  // 50: sandboxes.local.v1.UpdatePolicyRequest.allow:type_name -> sandboxes.local.v1.NetworkRule
+	14,  // 51: sandboxes.local.v1.UpdatePolicyRequest.deny:type_name -> sandboxes.local.v1.NetworkRule
+	18,  // 52: sandboxes.local.v1.UpdatePolicyResponse.sandbox:type_name -> sandboxes.local.v1.Sandbox
+	14,  // 53: sandboxes.local.v1.MutatePolicyRequest.rule:type_name -> sandboxes.local.v1.NetworkRule
+	18,  // 54: sandboxes.local.v1.MutatePolicyResponse.sandbox:type_name -> sandboxes.local.v1.Sandbox
+	16,  // 55: sandboxes.local.v1.UpdatePortsRequest.ports:type_name -> sandboxes.local.v1.Port
+	18,  // 56: sandboxes.local.v1.UpdatePortsResponse.sandbox:type_name -> sandboxes.local.v1.Sandbox
+	14,  // 57: sandboxes.local.v1.GetGlobalPolicyResponse.allow:type_name -> sandboxes.local.v1.NetworkRule
+	14,  // 58: sandboxes.local.v1.GetGlobalPolicyResponse.deny:type_name -> sandboxes.local.v1.NetworkRule
+	14,  // 59: sandboxes.local.v1.MutateGlobalPolicyRequest.rule:type_name -> sandboxes.local.v1.NetworkRule
+	14,  // 60: sandboxes.local.v1.MutateGlobalPolicyResponse.allow:type_name -> sandboxes.local.v1.NetworkRule
+	14,  // 61: sandboxes.local.v1.MutateGlobalPolicyResponse.deny:type_name -> sandboxes.local.v1.NetworkRule
+	14,  // 62: sandboxes.local.v1.ResetGlobalPolicyResponse.allow:type_name -> sandboxes.local.v1.NetworkRule
+	14,  // 63: sandboxes.local.v1.ResetGlobalPolicyResponse.deny:type_name -> sandboxes.local.v1.NetworkRule
+	97,  // 64: sandboxes.local.v1.GetOrgPolicyResponse.rules:type_name -> sandboxes.local.v1.OrgPolicyRule
+	163, // 65: sandboxes.local.v1.MCPRegisterServerRequest.headers:type_name -> sandboxes.local.v1.MCPRegisterServerRequest.HeadersEntry
+	164, // 66: sandboxes.local.v1.MCPRegisterServerRequest.secret_headers:type_name -> sandboxes.local.v1.MCPRegisterServerRequest.SecretHeadersEntry
+	112, // 67: sandboxes.local.v1.MCPRegisterServerResponse.server:type_name -> sandboxes.local.v1.MCPServerSummary
+	112, // 68: sandboxes.local.v1.MCPApproveRegistrationResponse.server:type_name -> sandboxes.local.v1.MCPServerSummary
+	112, // 69: sandboxes.local.v1.ListMCPServersResponse.servers:type_name -> sandboxes.local.v1.MCPServerSummary
+	5,   // 70: sandboxes.local.v1.MCPServerDetail.auth_status:type_name -> sandboxes.local.v1.MCPAuthStatus
+	6,   // 71: sandboxes.local.v1.MCPServerDetail.gateway_state:type_name -> sandboxes.local.v1.MCPGatewayState
+	120, // 72: sandboxes.local.v1.InspectMCPServerResponse.server:type_name -> sandboxes.local.v1.MCPServerDetail
+	5,   // 73: sandboxes.local.v1.MCPServerAuthStatus.status:type_name -> sandboxes.local.v1.MCPAuthStatus
+	5,   // 74: sandboxes.local.v1.GetMCPAuthStatusResponse.status:type_name -> sandboxes.local.v1.MCPAuthStatus
+	123, // 75: sandboxes.local.v1.GetMCPAuthStatusResponse.entries:type_name -> sandboxes.local.v1.MCPServerAuthStatus
+	135, // 76: sandboxes.local.v1.TemplateServiceSaveResponse.template:type_name -> sandboxes.local.v1.Template
+	135, // 77: sandboxes.local.v1.TemplateServiceLoadResponse.template:type_name -> sandboxes.local.v1.Template
+	135, // 78: sandboxes.local.v1.TemplateServiceListResponse.templates:type_name -> sandboxes.local.v1.Template
+	135, // 79: sandboxes.local.v1.TemplateServiceInspectResponse.template:type_name -> sandboxes.local.v1.Template
+	9,   // 80: sandboxes.local.v1.ApprovalHeader.value_class:type_name -> sandboxes.local.v1.HeaderValueClass
+	7,   // 81: sandboxes.local.v1.Approval.kind:type_name -> sandboxes.local.v1.ApprovalKind
+	8,   // 82: sandboxes.local.v1.Approval.state:type_name -> sandboxes.local.v1.ApprovalState
+	148, // 83: sandboxes.local.v1.Approval.headers:type_name -> sandboxes.local.v1.ApprovalHeader
+	149, // 84: sandboxes.local.v1.ApprovalServiceListResponse.approvals:type_name -> sandboxes.local.v1.Approval
+	149, // 85: sandboxes.local.v1.ApprovalServiceInspectResponse.approval:type_name -> sandboxes.local.v1.Approval
+	10,  // 86: sandboxes.local.v1.ApprovalServiceRespondRequest.decision:type_name -> sandboxes.local.v1.ApprovalDecision
+	11,  // 87: sandboxes.local.v1.ApprovalServiceRespondRequest.persist_scope:type_name -> sandboxes.local.v1.ApprovalPersistScope
+	149, // 88: sandboxes.local.v1.ApprovalServiceRespondResponse.approval:type_name -> sandboxes.local.v1.Approval
+	12,  // 89: sandboxes.local.v1.CheckKitRequest.source_kind:type_name -> sandboxes.local.v1.KitSourceKind
+	13,  // 90: sandboxes.local.v1.CheckKitResponse.reason:type_name -> sandboxes.local.v1.CheckKitReason
+	12,  // 91: sandboxes.local.v1.GetKitPolicyConfigResponse.allowed_sources:type_name -> sandboxes.local.v1.KitSourceKind
+	21,  // 92: sandboxes.local.v1.SandboxService.Create:input_type -> sandboxes.local.v1.CreateRequest
+	129, // 93: sandboxes.local.v1.SandboxService.GetVersion:input_type -> sandboxes.local.v1.GetVersionRequest
+	31,  // 94: sandboxes.local.v1.SandboxService.Get:input_type -> sandboxes.local.v1.GetRequest
+	32,  // 95: sandboxes.local.v1.SandboxService.List:input_type -> sandboxes.local.v1.ListRequest
+	35,  // 96: sandboxes.local.v1.SandboxService.Start:input_type -> sandboxes.local.v1.StartRequest
+	36,  // 97: sandboxes.local.v1.SandboxService.Stop:input_type -> sandboxes.local.v1.StopRequest
+	37,  // 98: sandboxes.local.v1.SandboxService.Delete:input_type -> sandboxes.local.v1.DeleteRequest
+	40,  // 99: sandboxes.local.v1.SandboxService.Watch:input_type -> sandboxes.local.v1.WatchRequest
+	46,  // 100: sandboxes.local.v1.SandboxService.Exec:input_type -> sandboxes.local.v1.ExecRequest
+	50,  // 101: sandboxes.local.v1.SandboxService.ExecSession:input_type -> sandboxes.local.v1.ExecSessionRequest
+	83,  // 102: sandboxes.local.v1.SandboxService.UpdatePolicy:input_type -> sandboxes.local.v1.UpdatePolicyRequest
+	85,  // 103: sandboxes.local.v1.SandboxService.MutatePolicy:input_type -> sandboxes.local.v1.MutatePolicyRequest
+	87,  // 104: sandboxes.local.v1.SandboxService.UpdatePorts:input_type -> sandboxes.local.v1.UpdatePortsRequest
+	131, // 105: sandboxes.local.v1.SandboxService.GetPolicyProfile:input_type -> sandboxes.local.v1.GetPolicyProfileRequest
+	133, // 106: sandboxes.local.v1.SandboxService.SetPolicyProfile:input_type -> sandboxes.local.v1.SetPolicyProfileRequest
+	89,  // 107: sandboxes.local.v1.SandboxService.GetGlobalPolicy:input_type -> sandboxes.local.v1.GetGlobalPolicyRequest
+	91,  // 108: sandboxes.local.v1.SandboxService.MutateGlobalPolicy:input_type -> sandboxes.local.v1.MutateGlobalPolicyRequest
+	100, // 109: sandboxes.local.v1.SandboxService.CheckPolicy:input_type -> sandboxes.local.v1.CheckPolicyRequest
+	113, // 110: sandboxes.local.v1.SandboxService.ListMCPServers:input_type -> sandboxes.local.v1.ListMCPServersRequest
+	106, // 111: sandboxes.local.v1.SandboxService.MCPRegisterServer:input_type -> sandboxes.local.v1.MCPRegisterServerRequest
+	108, // 112: sandboxes.local.v1.SandboxService.MCPApproveRegistration:input_type -> sandboxes.local.v1.MCPApproveRegistrationRequest
+	110, // 113: sandboxes.local.v1.SandboxService.MCPRemoveServer:input_type -> sandboxes.local.v1.MCPRemoveServerRequest
+	115, // 114: sandboxes.local.v1.SandboxService.MCPLoadServer:input_type -> sandboxes.local.v1.MCPLoadServerRequest
+	117, // 115: sandboxes.local.v1.SandboxService.MCPUnloadServer:input_type -> sandboxes.local.v1.MCPUnloadServerRequest
+	119, // 116: sandboxes.local.v1.SandboxService.InspectMCPServer:input_type -> sandboxes.local.v1.InspectMCPServerRequest
+	122, // 117: sandboxes.local.v1.SandboxService.GetMCPAuthStatus:input_type -> sandboxes.local.v1.GetMCPAuthStatusRequest
+	125, // 118: sandboxes.local.v1.SandboxService.RemoveMCPAuth:input_type -> sandboxes.local.v1.RemoveMCPAuthRequest
+	127, // 119: sandboxes.local.v1.SandboxService.StartMCPAuth:input_type -> sandboxes.local.v1.StartMCPAuthRequest
+	102, // 120: sandboxes.local.v1.SandboxService.MCPCall:input_type -> sandboxes.local.v1.MCPCallRequest
+	104, // 121: sandboxes.local.v1.SandboxService.MCPApproveCall:input_type -> sandboxes.local.v1.MCPApproveCallRequest
+	93,  // 122: sandboxes.local.v1.SandboxService.RefreshPolicies:input_type -> sandboxes.local.v1.RefreshPoliciesRequest
+	95,  // 123: sandboxes.local.v1.SandboxService.ResetGlobalPolicy:input_type -> sandboxes.local.v1.ResetGlobalPolicyRequest
+	98,  // 124: sandboxes.local.v1.SandboxService.GetOrgPolicy:input_type -> sandboxes.local.v1.GetOrgPolicyRequest
+	38,  // 125: sandboxes.local.v1.OperationService.Get:input_type -> sandboxes.local.v1.OperationServiceGetRequest
+	39,  // 126: sandboxes.local.v1.OperationService.Wait:input_type -> sandboxes.local.v1.OperationServiceWaitRequest
+	54,  // 127: sandboxes.local.v1.RegistryCredentialService.Login:input_type -> sandboxes.local.v1.RegistryCredentialServiceLoginRequest
+	56,  // 128: sandboxes.local.v1.RegistryCredentialService.Logout:input_type -> sandboxes.local.v1.RegistryCredentialServiceLogoutRequest
+	57,  // 129: sandboxes.local.v1.RegistryCredentialService.List:input_type -> sandboxes.local.v1.RegistryCredentialServiceListRequest
+	62,  // 130: sandboxes.local.v1.SecretService.Set:input_type -> sandboxes.local.v1.SecretServiceSetRequest
+	65,  // 131: sandboxes.local.v1.SecretService.Create:input_type -> sandboxes.local.v1.SecretServiceCreateRequest
+	67,  // 132: sandboxes.local.v1.SecretService.List:input_type -> sandboxes.local.v1.SecretServiceListRequest
+	69,  // 133: sandboxes.local.v1.SecretService.Remove:input_type -> sandboxes.local.v1.SecretServiceRemoveRequest
+	71,  // 134: sandboxes.local.v1.SecretService.SetCustom:input_type -> sandboxes.local.v1.SecretServiceSetCustomRequest
+	73,  // 135: sandboxes.local.v1.AccountService.Login:input_type -> sandboxes.local.v1.AccountServiceLoginRequest
+	81,  // 136: sandboxes.local.v1.AccountService.LoginDevice:input_type -> sandboxes.local.v1.AccountServiceLoginDeviceRequest
+	75,  // 137: sandboxes.local.v1.AccountService.LoginWithPAT:input_type -> sandboxes.local.v1.AccountServiceLoginWithPATRequest
+	77,  // 138: sandboxes.local.v1.AccountService.Logout:input_type -> sandboxes.local.v1.AccountServiceLogoutRequest
+	79,  // 139: sandboxes.local.v1.AccountService.Status:input_type -> sandboxes.local.v1.AccountServiceStatusRequest
+	136, // 140: sandboxes.local.v1.TemplateService.Save:input_type -> sandboxes.local.v1.TemplateServiceSaveRequest
+	138, // 141: sandboxes.local.v1.TemplateService.Load:input_type -> sandboxes.local.v1.TemplateServiceLoadRequest
+	140, // 142: sandboxes.local.v1.TemplateService.Remove:input_type -> sandboxes.local.v1.TemplateServiceRemoveRequest
+	142, // 143: sandboxes.local.v1.TemplateService.List:input_type -> sandboxes.local.v1.TemplateServiceListRequest
+	144, // 144: sandboxes.local.v1.TemplateService.Inspect:input_type -> sandboxes.local.v1.TemplateServiceInspectRequest
+	145, // 145: sandboxes.local.v1.TemplateService.Export:input_type -> sandboxes.local.v1.TemplateServiceExportRequest
+	150, // 146: sandboxes.local.v1.ApprovalService.List:input_type -> sandboxes.local.v1.ApprovalServiceListRequest
+	152, // 147: sandboxes.local.v1.ApprovalService.Inspect:input_type -> sandboxes.local.v1.ApprovalServiceInspectRequest
+	154, // 148: sandboxes.local.v1.ApprovalService.Respond:input_type -> sandboxes.local.v1.ApprovalServiceRespondRequest
+	156, // 149: sandboxes.local.v1.KitPolicyService.CheckKit:input_type -> sandboxes.local.v1.CheckKitRequest
+	158, // 150: sandboxes.local.v1.KitPolicyService.GetKitPolicyConfig:input_type -> sandboxes.local.v1.GetKitPolicyConfigRequest
+	42,  // 151: sandboxes.local.v1.SandboxService.Create:output_type -> sandboxes.local.v1.CreateResponse
+	130, // 152: sandboxes.local.v1.SandboxService.GetVersion:output_type -> sandboxes.local.v1.GetVersionResponse
+	33,  // 153: sandboxes.local.v1.SandboxService.Get:output_type -> sandboxes.local.v1.GetResponse
+	34,  // 154: sandboxes.local.v1.SandboxService.List:output_type -> sandboxes.local.v1.ListResponse
+	43,  // 155: sandboxes.local.v1.SandboxService.Start:output_type -> sandboxes.local.v1.StartResponse
+	44,  // 156: sandboxes.local.v1.SandboxService.Stop:output_type -> sandboxes.local.v1.StopResponse
+	45,  // 157: sandboxes.local.v1.SandboxService.Delete:output_type -> sandboxes.local.v1.DeleteResponse
+	41,  // 158: sandboxes.local.v1.SandboxService.Watch:output_type -> sandboxes.local.v1.WatchResponse
+	47,  // 159: sandboxes.local.v1.SandboxService.Exec:output_type -> sandboxes.local.v1.ExecResponse
+	51,  // 160: sandboxes.local.v1.SandboxService.ExecSession:output_type -> sandboxes.local.v1.ExecSessionResponse
+	84,  // 161: sandboxes.local.v1.SandboxService.UpdatePolicy:output_type -> sandboxes.local.v1.UpdatePolicyResponse
+	86,  // 162: sandboxes.local.v1.SandboxService.MutatePolicy:output_type -> sandboxes.local.v1.MutatePolicyResponse
+	88,  // 163: sandboxes.local.v1.SandboxService.UpdatePorts:output_type -> sandboxes.local.v1.UpdatePortsResponse
+	132, // 164: sandboxes.local.v1.SandboxService.GetPolicyProfile:output_type -> sandboxes.local.v1.GetPolicyProfileResponse
+	134, // 165: sandboxes.local.v1.SandboxService.SetPolicyProfile:output_type -> sandboxes.local.v1.SetPolicyProfileResponse
+	90,  // 166: sandboxes.local.v1.SandboxService.GetGlobalPolicy:output_type -> sandboxes.local.v1.GetGlobalPolicyResponse
+	92,  // 167: sandboxes.local.v1.SandboxService.MutateGlobalPolicy:output_type -> sandboxes.local.v1.MutateGlobalPolicyResponse
+	101, // 168: sandboxes.local.v1.SandboxService.CheckPolicy:output_type -> sandboxes.local.v1.CheckPolicyResponse
+	114, // 169: sandboxes.local.v1.SandboxService.ListMCPServers:output_type -> sandboxes.local.v1.ListMCPServersResponse
+	107, // 170: sandboxes.local.v1.SandboxService.MCPRegisterServer:output_type -> sandboxes.local.v1.MCPRegisterServerResponse
+	109, // 171: sandboxes.local.v1.SandboxService.MCPApproveRegistration:output_type -> sandboxes.local.v1.MCPApproveRegistrationResponse
+	111, // 172: sandboxes.local.v1.SandboxService.MCPRemoveServer:output_type -> sandboxes.local.v1.MCPRemoveServerResponse
+	116, // 173: sandboxes.local.v1.SandboxService.MCPLoadServer:output_type -> sandboxes.local.v1.MCPLoadServerResponse
+	118, // 174: sandboxes.local.v1.SandboxService.MCPUnloadServer:output_type -> sandboxes.local.v1.MCPUnloadServerResponse
+	121, // 175: sandboxes.local.v1.SandboxService.InspectMCPServer:output_type -> sandboxes.local.v1.InspectMCPServerResponse
+	124, // 176: sandboxes.local.v1.SandboxService.GetMCPAuthStatus:output_type -> sandboxes.local.v1.GetMCPAuthStatusResponse
+	126, // 177: sandboxes.local.v1.SandboxService.RemoveMCPAuth:output_type -> sandboxes.local.v1.RemoveMCPAuthResponse
+	128, // 178: sandboxes.local.v1.SandboxService.StartMCPAuth:output_type -> sandboxes.local.v1.StartMCPAuthResponse
+	103, // 179: sandboxes.local.v1.SandboxService.MCPCall:output_type -> sandboxes.local.v1.MCPCallResponse
+	105, // 180: sandboxes.local.v1.SandboxService.MCPApproveCall:output_type -> sandboxes.local.v1.MCPApproveCallResponse
+	94,  // 181: sandboxes.local.v1.SandboxService.RefreshPolicies:output_type -> sandboxes.local.v1.RefreshPoliciesResponse
+	96,  // 182: sandboxes.local.v1.SandboxService.ResetGlobalPolicy:output_type -> sandboxes.local.v1.ResetGlobalPolicyResponse
+	99,  // 183: sandboxes.local.v1.SandboxService.GetOrgPolicy:output_type -> sandboxes.local.v1.GetOrgPolicyResponse
+	52,  // 184: sandboxes.local.v1.OperationService.Get:output_type -> sandboxes.local.v1.OperationServiceGetResponse
+	53,  // 185: sandboxes.local.v1.OperationService.Wait:output_type -> sandboxes.local.v1.OperationServiceWaitResponse
+	55,  // 186: sandboxes.local.v1.RegistryCredentialService.Login:output_type -> sandboxes.local.v1.RegistryCredentialServiceLoginResponse
+	60,  // 187: sandboxes.local.v1.RegistryCredentialService.Logout:output_type -> sandboxes.local.v1.RegistryCredentialServiceLogoutResponse
+	59,  // 188: sandboxes.local.v1.RegistryCredentialService.List:output_type -> sandboxes.local.v1.RegistryCredentialServiceListResponse
+	64,  // 189: sandboxes.local.v1.SecretService.Set:output_type -> sandboxes.local.v1.SecretServiceSetResponse
+	66,  // 190: sandboxes.local.v1.SecretService.Create:output_type -> sandboxes.local.v1.SecretServiceCreateResponse
+	68,  // 191: sandboxes.local.v1.SecretService.List:output_type -> sandboxes.local.v1.SecretServiceListResponse
+	70,  // 192: sandboxes.local.v1.SecretService.Remove:output_type -> sandboxes.local.v1.SecretServiceRemoveResponse
+	72,  // 193: sandboxes.local.v1.SecretService.SetCustom:output_type -> sandboxes.local.v1.SecretServiceSetCustomResponse
+	74,  // 194: sandboxes.local.v1.AccountService.Login:output_type -> sandboxes.local.v1.AccountServiceLoginResponse
+	82,  // 195: sandboxes.local.v1.AccountService.LoginDevice:output_type -> sandboxes.local.v1.AccountServiceLoginDeviceResponse
+	76,  // 196: sandboxes.local.v1.AccountService.LoginWithPAT:output_type -> sandboxes.local.v1.AccountServiceLoginWithPATResponse
+	78,  // 197: sandboxes.local.v1.AccountService.Logout:output_type -> sandboxes.local.v1.AccountServiceLogoutResponse
+	80,  // 198: sandboxes.local.v1.AccountService.Status:output_type -> sandboxes.local.v1.AccountServiceStatusResponse
+	137, // 199: sandboxes.local.v1.TemplateService.Save:output_type -> sandboxes.local.v1.TemplateServiceSaveResponse
+	139, // 200: sandboxes.local.v1.TemplateService.Load:output_type -> sandboxes.local.v1.TemplateServiceLoadResponse
+	141, // 201: sandboxes.local.v1.TemplateService.Remove:output_type -> sandboxes.local.v1.TemplateServiceRemoveResponse
+	143, // 202: sandboxes.local.v1.TemplateService.List:output_type -> sandboxes.local.v1.TemplateServiceListResponse
+	147, // 203: sandboxes.local.v1.TemplateService.Inspect:output_type -> sandboxes.local.v1.TemplateServiceInspectResponse
+	146, // 204: sandboxes.local.v1.TemplateService.Export:output_type -> sandboxes.local.v1.TemplateServiceExportResponse
+	151, // 205: sandboxes.local.v1.ApprovalService.List:output_type -> sandboxes.local.v1.ApprovalServiceListResponse
+	153, // 206: sandboxes.local.v1.ApprovalService.Inspect:output_type -> sandboxes.local.v1.ApprovalServiceInspectResponse
+	155, // 207: sandboxes.local.v1.ApprovalService.Respond:output_type -> sandboxes.local.v1.ApprovalServiceRespondResponse
+	157, // 208: sandboxes.local.v1.KitPolicyService.CheckKit:output_type -> sandboxes.local.v1.CheckKitResponse
+	159, // 209: sandboxes.local.v1.KitPolicyService.GetKitPolicyConfig:output_type -> sandboxes.local.v1.GetKitPolicyConfigResponse
+	151, // [151:210] is the sub-list for method output_type
+	92,  // [92:151] is the sub-list for method input_type
+	92,  // [92:92] is the sub-list for extension type_name
+	92,  // [92:92] is the sub-list for extension extendee
+	0,   // [0:92] is the sub-list for field type_name
 }
 
 func init() { file_sandboxes_local_v1_sandbox_proto_init() }
@@ -11253,7 +11289,7 @@ func file_sandboxes_local_v1_sandbox_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_sandboxes_local_v1_sandbox_proto_rawDesc), len(file_sandboxes_local_v1_sandbox_proto_rawDesc)),
 			NumEnums:      14,
-			NumMessages:   149,
+			NumMessages:   151,
 			NumExtensions: 0,
 			NumServices:   8,
 		},

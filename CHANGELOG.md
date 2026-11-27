@@ -6,6 +6,12 @@
 
 ## Unreleased
 
+### Added
+
+- Add labels to sandbox creation and to sandbox records returned by Get and List.
+  Older daemons ignore the new proto3 field. Support depends on daemon-side
+  validation and cannot be inferred from the contract version.
+
 ### Changed
 
 - Rename the GitHub organization and Go module path. The canonical module path
